@@ -1,11 +1,10 @@
 namespace Requiem.Tutorial;
 
 /// <summary>
-/// Requiem has edge-case-biased generators that more frequently include
-/// problematic values (0, ±1, min/max, NaN, empty, etc.) to find bugs faster.
-/// The biased generators excel at dimensional correlation - generating
-/// identical edge cases across multiple dimensions,
-/// which is essentially impossible with independent uniform random distributions.
+/// Requiem has edge-case-biased generators that more frequently include problematic values (0, ±1,
+/// min/max, NaN, empty, etc.) to find bugs faster. The biased generators excel at dimensional
+/// correlation: generating identical edge cases across multiple dimensions, which is very
+/// improbable with independent uniform random distributions.
 /// </summary>
 public class Tutorial
 {
@@ -18,7 +17,7 @@ public class Tutorial
   [Test]
   public void BasicGeneratorsAndEdgeCases()
   {
-    // Generate single values - biased towards edge cases
+    // Generate single values
     var number = Gens.Int.Single();
     var text = Gens.String.Single();
 
@@ -73,10 +72,11 @@ public class Tutorial
     var evenNumbers = Gens.Int.Where(x => x % 2 == 0);
     evenNumbers.Check(x => Assert.AreEq(x % 2, 0));
 
-    // Multiple inputs with Zip - check commutativity of addition between double and int
+    // Combine multiple generators with Zip
+    // Check commutativity of addition between double and int
     Gens.Int.Zip(Gens.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
 
-    // Chain for dependent generation - next value depends on previous
+    // Use Chain for dependent generation, where the next value depends on previous
     var gen = Gens.Range(1, 10).Chain(n => Gens.Range(n, n + 10));
     gen.Check(x => Assert.IsTrue(x >= 1));
 
@@ -90,7 +90,6 @@ public class Tutorial
   }
 
   /// <summary>
-  /// Generate collections and tuples for testing complex scenarios.
   /// Collections are biased towards edge cases: empty, single-element, large sizes, and elements
   /// that occur in multiple places.
   /// </summary>
@@ -121,7 +120,7 @@ public class Tutorial
   }
 
   /// <summary>
-  /// Demonstrates dimensional correlation advantage of biased generators.
+  /// This example demonstrates dimensional correlation advantage of biased generators.
   /// Many bugs only appear when values across multiple dimensions are edge cases.
   ///
   /// In this example we generate a tuple of values from the same generator.
@@ -143,7 +142,7 @@ public class Tutorial
       // Consistency with object.Equals
       Assert.AreEq(a.Equals(b), Equals(a, b));
 
-      // Hash code contract - needs dimensional correlation to test with equal edge cases
+      // Consistency between GetHashCode and Equals
       if (a.Equals(b))
       {
         Assert.AreEq(a.GetHashCode(), b.GetHashCode(),
