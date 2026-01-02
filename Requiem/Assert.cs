@@ -1,6 +1,6 @@
 using TUnit.Assertions.Exceptions;
 
-namespace Prelude.Spec;
+namespace Requiem;
 
 public abstract class Assert
 {
@@ -86,7 +86,7 @@ public abstract class Assert
     }
 
     public static void AreEq<T>(IEquatable<T>? a, T? b, string? message = null)
-        where T : class
+        where T : class?
     {
         if (a is null && b is null)
             return;
