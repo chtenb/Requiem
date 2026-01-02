@@ -54,7 +54,7 @@ public class Tutorial
 
         // Failed tests will report the seed of the smallest counter example it found in the alotted number of iterations
         // You can provide this seed to be used as initial seed, for easier debugging, or for further shrinking of the counter example
-        Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123abc");
+        Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
     }
 
     /// <summary>
