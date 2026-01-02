@@ -10,6 +10,11 @@ tab_width = 4
 # We commit lf, but want to allow windows users to use autocrlf
 # end_of_line = lf
 
+# To avoid the scrollbar on the github homepage
+[Requiem.Tutorial/Tutorial.cs]
+max_line_length = 100
+indent_size = 2
+
 [*.json]
 indent_size = 2
 indent_style = space

@@ -9,144 +9,146 @@ namespace Requiem.Tutorial;
 /// </summary>
 public class Tutorial
 {
-    /// <summary>
-    /// Built-in generators are biased towards edge cases:
-    /// - Gens.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
-    /// - Gens.String: empty, whitespace, very long, Unicode edge cases
-    /// - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
-    /// </summary>
-    [Test]
-    public void BasicGeneratorsAndEdgeCases()
+  /// <summary>
+  /// Built-in generators are biased towards edge cases:
+  /// - Gens.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
+  /// - Gens.String: empty, whitespace, very long, Unicode edge cases
+  /// - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
+  /// </summary>
+  [Test]
+  public void BasicGeneratorsAndEdgeCases()
+  {
+    // Generate single values - biased towards edge cases
+    var number = Gens.Int.Single();
+    var text = Gens.String.Single();
+
+    Console.WriteLine($"Int: {number}, String: '{text}'");
+
+    // Custom generators: Range, OneOf, Frequency
+    var positiveInt = Gens.Range(1, 100).Single();
+    var choice = Gens.OneOf("red", "green", "blue").Single();
+    var weighted = Gens.Frequency(
+        (80, Gens.Const("common")),
+        (20, Gens.Const("rare"))
+    ).Single();
+
+    Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
+  }
+
+  /// <summary>
+  /// Verify properties hold for all generated inputs (default 1000 iterations).
+  /// Automatic shrinking finds minimal counterexamples on failure.
+  /// </summary>
+  [Test]
+  public void PropertyBasedTesting()
+  {
+    // Basic property: reversing twice gives original
+    Gens.Int.List().Check(list =>
     {
-        // Generate single values - biased towards edge cases
-        var number = Gens.Int.Single();
-        var text = Gens.String.Single();
+      var reversed = list.AsEnumerable().Reverse().Reverse().ToList();
+      Assert.AreEq(list, reversed);
+    });
 
-        Console.WriteLine($"Int: {number}, String: '{text}'");
+    // Custom number of iterations: run 10,000 times instead of the default 1000
+    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), iter: 10000);
 
-        // Custom generators: Range, OneOf, Frequency
-        var positiveInt = Gens.Range(1, 100).Single();
-        var choice = Gens.OneOf("red", "green", "blue").Single();
-        var weighted = Gens.Frequency(
-            (80, Gens.Const("common")),
-            (20, Gens.Const("rare"))
-        ).Single();
+    // Failed tests will report the seed of the smallest counter example it found in the alotted
+    // number of iterations You can provide this seed to be used as initial seed, for easier
+    // debugging, or for further shrinking of the counter example
+    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
+  }
 
-        Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
-    }
+  /// <summary>
+  /// Transform generators using Select, Where, and Chain.
+  /// Transformations preserve shrinking behavior from CsCheck.
+  /// </summary>
+  [Test]
+  public void GeneratorTransformations()
+  {
+    // Select transforms values (filter int.MinValue as Math.Abs throws)
+    var positiveInts = Gens.Int.Where(x => x != int.MinValue).Select(x => Math.Abs(x));
+    positiveInts.Check(x => Assert.IsTrue(x >= 0));
 
-    /// <summary>
-    /// Verify properties hold for all generated inputs (default 1000 iterations).
-    /// Automatic shrinking finds minimal counterexamples on failure.
-    /// </summary>
-    [Test]
-    public void PropertyBasedTesting()
+    // Where filters values
+    var evenNumbers = Gens.Int.Where(x => x % 2 == 0);
+    evenNumbers.Check(x => Assert.AreEq(x % 2, 0));
+
+    // Multiple inputs with Zip - check commutativity of addition between double and int
+    Gens.Int.Zip(Gens.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
+
+    // Chain for dependent generation - next value depends on previous
+    var gen = Gens.Range(1, 10).Chain(n => Gens.Range(n, n + 10));
+    gen.Check(x => Assert.IsTrue(x >= 1));
+
+    // Combine transformations (but prefer direct generation for efficiency)
+    var combined = Gens.Int
+        .Where(x => x != 0 && x != int.MinValue)
+        .Select(x => Math.Abs(x))
+        .Where(x => x < 1000);
+
+    var moreEfficient = Gens.Range(1, 999); // Direct is better
+  }
+
+  /// <summary>
+  /// Generate collections and tuples for testing complex scenarios.
+  /// Collections are biased towards edge cases: empty, single-element, large sizes, and elements
+  /// that occur in multiple places.
+  /// </summary>
+  [Test]
+  public void CollectionsAndTuples()
+  {
+    // Arrays with default size range [0, 100]
+    Gens.Int.Array().Check(arr =>
     {
-        // Basic property: reversing twice gives original
-        Gens.Int.List().Check(list =>
-        {
-            var reversed = list.AsEnumerable().Reverse().Reverse().ToList();
-            Assert.AreEq(list, reversed);
-        });
+      Assert.AreEq(arr.Length, arr.Count());
+      Assert.IsTrue(arr.Reverse().Reverse().SequenceEqual(arr));
+    });
 
-        // Custom number of iterations: run 10,000 times instead of the default 1000
-        Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), iter: 10000);
+    // Tuples of same type
+    Gens.Int.Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
 
-        // Failed tests will report the seed of the smallest counter example it found in the alotted number of iterations
-        // You can provide this seed to be used as initial seed, for easier debugging, or for further shrinking of the counter example
-        Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
-    }
-
-    /// <summary>
-    /// Transform generators using Select, Where, and Chain.
-    /// Transformations preserve shrinking behavior from CsCheck.
-    /// </summary>
-    [Test]
-    public void GeneratorTransformations()
+    // Mixed tuples with Zip
+    Gens.String.Zip(Gens.Int, Gens.Bool).Check((str, num, flag) =>
     {
-        // Select transforms values (filter int.MinValue as Math.Abs throws)
-        var positiveInts = Gens.Int.Where(x => x != int.MinValue).Select(x => Math.Abs(x));
-        positiveInts.Check(x => Assert.IsTrue(x >= 0));
+      Assert.IsTrue(str != null);
+      // Handle int.MinValue edge case (can't be negated)
+      if (num != int.MinValue)
+      {
+        var result = flag ? num : -num;
+        Assert.AreEq(Math.Abs(result), Math.Abs(num));
+      }
+    });
+  }
 
-        // Where filters values
-        var evenNumbers = Gens.Int.Where(x => x % 2 == 0);
-        evenNumbers.Check(x => Assert.AreEq(x % 2, 0));
-
-        // Multiple inputs with Zip - check commutativity of addition between double and int
-        Gens.Int.Zip(Gens.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
-
-        // Chain for dependent generation - next value depends on previous
-        var gen = Gens.Range(1, 10).Chain(n => Gens.Range(n, n + 10));
-        gen.Check(x => Assert.IsTrue(x >= 1));
-
-        // Combine transformations (but prefer direct generation for efficiency)
-        var combined = Gens.Int
-            .Where(x => x != 0 && x != int.MinValue)
-            .Select(x => Math.Abs(x))
-            .Where(x => x < 1000);
-
-        var moreEfficient = Gens.Range(1, 999); // Direct is better
-    }
-
-    /// <summary>
-    /// Generate collections and tuples for testing complex scenarios.
-    /// Collections are biased towards edge cases: empty, single-element, large sizes, and elements that occur in multiple places.
-    /// </summary>
-    [Test]
-    public void CollectionsAndTuples()
+  /// <summary>
+  /// Demonstrates dimensional correlation advantage of biased generators.
+  /// Many bugs only appear when values across multiple dimensions are edge cases.
+  ///
+  /// In this example we generate a tuple of values from the same generator.
+  /// If these were independently generated by a uniformly distributed generator,
+  /// the chance of generating two similar or equal objects would be incredibly small.
+  /// Our biased generators make sure that these edge cases happen much more frequently,
+  /// hitting the important branches in this test.
+  /// </summary>
+  public static void TestEqualityLawsFor<T>(Generator<T> gen) where T : IEquatable<T>
+  {
+    gen.Tuple().Check((a, b) =>
     {
-        // Arrays with default size range [0, 100]
-        Gens.Int.Array().Check(arr =>
-        {
-            Assert.AreEq(arr.Length, arr.Count());
-            Assert.IsTrue(arr.Reverse().Reverse().SequenceEqual(arr));
-        });
+      // Reflexivity with edge cases
+      Assert.IsTrue(a.Equals(a), $"Reflexivity failed for {a}");
 
-        // Tuples of same type
-        Gens.Int.Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
+      // Symmetry
+      Assert.AreEq(a.Equals(b), b.Equals(a), $"Symmetry failed: {a}, {b}");
 
-        // Mixed tuples with Zip
-        Gens.String.Zip(Gens.Int, Gens.Bool).Check((str, num, flag) =>
-        {
-            Assert.IsTrue(str != null);
-            // Handle int.MinValue edge case (can't be negated)
-            if (num != int.MinValue)
-            {
-                var result = flag ? num : -num;
-                Assert.AreEq(Math.Abs(result), Math.Abs(num));
-            }
-        });
-    }
+      // Consistency with object.Equals
+      Assert.AreEq(a.Equals(b), Equals(a, b));
 
-    /// <summary>
-    /// Demonstrates dimensional correlation advantage of biased generators.
-    /// Many bugs only appear when values across multiple dimensions are edge cases.
-    ///
-    /// In this example we generate a tuple of values from the same generator.
-    /// If these were independently generated by a uniformly distributed generator,
-    /// the chance of generating two similar or equal objects would be incredibly small.
-    /// Our biased generators make sure that these edge cases happen much more frequently,
-    /// hitting the important branches in this test.
-    /// </summary>
-    public static void TestEqualityLawsFor<T>(Generator<T> gen) where T : IEquatable<T>
-    {
-        gen.Tuple().Check((a, b) =>
-        {
-            // Reflexivity with edge cases
-            Assert.IsTrue(a.Equals(a), $"Reflexivity failed for {a}");
-
-            // Symmetry
-            Assert.AreEq(a.Equals(b), b.Equals(a), $"Symmetry failed: {a}, {b}");
-
-            // Consistency with object.Equals
-            Assert.AreEq(a.Equals(b), Equals(a, b));
-
-            // Hash code contract - needs dimensional correlation to test with equal edge cases
-            if (a.Equals(b))
-            {
-                Assert.AreEq(a.GetHashCode(), b.GetHashCode(),
-                    $"Hash code contract violated: {a} and {b} equal but different hashes");
-            }
-        });
-    }
+      // Hash code contract - needs dimensional correlation to test with equal edge cases
+      if (a.Equals(b))
+      {
+        Assert.AreEq(a.GetHashCode(), b.GetHashCode(),
+                $"Hash code contract violated: {a} and {b} equal but different hashes");
+      }
+    });
+  }
 }
