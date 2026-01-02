@@ -1,12 +1,3 @@
-# Requiem
-
-A property-based testing library for C# with built-in edge case bias. Requiem makes it easier to find bugs by automatically generating problematic values that often break code.
-
-## Tutorial
-
-The following tutorials demonstrate Requiem's features through complete, runnable examples.
-
-```csharp
 namespace Requiem.Tutorial;
 
 /// <summary>
@@ -161,22 +152,3 @@ public class Tutorial
         });
     }
 }
-
-```
-
-## Running the Examples
-
-All examples are in the `Requiem.Tutorial` project. To run them:
-
-```bash
-cd lib/Requiem/Requiem.Tutorial
-dotnet test
-```
-
-## Credits
-
-Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides a simplified API and enhanced edge case bias to make property-based testing more accessible and effective.
-
-## License
-
-See [LICENSE](LICENSE) file for details.

@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+        dotnet-quality: 'preview'
+        
+    - name: Install just
+      uses: extractions/setup-just@v2
+      
+    - name: Restore dependencies
+      run: just restore
+      
+    - name: Check code formatting
+      run: just format-check
+      
+    - name: Build (Release)
+      run: just build-release
+      
+    - name: Run tests
+      run: just test-all
+      
+    - name: Pack NuGet package
+      run: just pack
+      
+    - name: Upload NuGet package artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: nuget-package
+        path: ./artifacts/*.nupkg
+        retention-days: 30
+        
+  # Uncomment this job when ready to publish to NuGet.org
+  # publish-nuget:
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+  #
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v4
+  #
+  #   - name: Setup .NET
+  #     uses: actions/setup-dotnet@v4
+  #     with:
+  #       dotnet-version: '10.0.x'
+  #       dotnet-quality: 'preview'
+  #
+  #   - name: Install just
+  #     uses: extractions/setup-just@v2
+  #
+  #   - name: Restore dependencies
+  #     run: just restore
+  #
+  #   - name: Build (Release)
+  #     run: just build-release
+  #
+  #   - name: Pack NuGet package
+  #     run: just pack
+  #
+  #   - name: Publish to NuGet.org
+  #     run: dotnet nuget push ./artifacts/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+  #     env:
+  #       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}

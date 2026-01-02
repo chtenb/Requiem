@@ -19,7 +19,7 @@ public sealed class Generator<T>
     /// Generate a single value (convenience method).
     /// </summary>
     public T Single() => Inner.Single();
-    
+
     /// <summary>
     /// Check that a property holds for all generated values.
     /// Automatically shrinks failing cases to find minimal counterexamples.
@@ -40,7 +40,7 @@ public sealed class Generator<T>
     {
         Inner.Sample(assert, iter: iter, time: time, seed: seed, print: print, threads: threads);
     }
-    
+
 }
 
 /// <summary>
@@ -65,7 +65,7 @@ public static class GeneratorTupleExtensions
             iter: iter, time: time, seed: seed, threads: threads,
             print: print != null ? (t => print(t.Item1, t.Item2)) : null);
     }
-    
+
     /// <summary>
     /// Check that a property holds for all triples of generated values.
     /// </summary>
@@ -83,7 +83,7 @@ public static class GeneratorTupleExtensions
             iter: iter, time: time, seed: seed, threads: threads,
             print: print != null ? (t => print(t.Item1, t.Item2, t.Item3)) : null);
     }
-    
+
     /// <summary>
     /// Check that a property holds for all 4-tuples of generated values.
     /// </summary>
@@ -101,7 +101,7 @@ public static class GeneratorTupleExtensions
             iter: iter, time: time, seed: seed, threads: threads,
             print: print != null ? (t => print(t.Item1, t.Item2, t.Item3, t.Item4)) : null);
     }
-    
+
     /// <summary>
     /// Check that a property holds for all 5-tuples of generated values.
     /// </summary>

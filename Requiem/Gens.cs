@@ -136,13 +136,13 @@ public static partial class Gens
     /// <summary>
     /// Create a generator that always returns the same constant value.
     /// </summary>
-    public static Generator<T> Const<T>(T value) => 
+    public static Generator<T> Const<T>(T value) =>
         new(Gen.Const(value));
 
     /// <summary>
     /// Create a generator that randomly selects one of the provided values with equal probability.
     /// </summary>
-    public static Generator<T> OneOf<T>(params T[] values) => 
+    public static Generator<T> OneOf<T>(params T[] values) =>
         new(Gen.OneOfConst(values));
 
     /// <summary>
@@ -153,7 +153,7 @@ public static partial class Gens
     {
         if (choices.Length == 0)
             throw new ArgumentException("Must provide at least one choice", nameof(choices));
-            
+
         var csCheckChoices = choices.Select(c => (c.Weight, (IGen<T>)c.Gen.Inner)).ToArray();
         return new(Gen.Frequency(csCheckChoices));
     }

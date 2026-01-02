@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsCheck" Version="4.5.0" />
-    <PackageReference Include="TUnit" Version="1.6.20" />
+    <PackageReference Include="TUnit.Assertions" Version="1.6.20" />
   </ItemGroup>
 
 </Project>

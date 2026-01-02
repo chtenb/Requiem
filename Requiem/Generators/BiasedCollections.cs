@@ -63,18 +63,18 @@ internal static class BiasedCollections
     private static Gen<T[]> VeryLargeArray<T>(Gen<T> elementGen, int minLength, int maxLength)
     {
         var sizes = new List<int>();
-        
+
         if (1000 <= minLength)
             sizes.Add(1000);
         if (10000 <= minLength)
             sizes.Add(10000);
         if (maxLength <= minLength)
             sizes.Add(maxLength);
-        
+
         // If no valid sizes, use minLength
         if (sizes.Count == 0)
             sizes.Add(minLength);
-        
+
         return Gen.OneOfConst(sizes.ToArray())
             .SelectMany(size => elementGen.Array[size, size]);
     }
@@ -94,13 +94,13 @@ internal static class BiasedCollections
                 {
                     var result = new T[size];
                     var random = new Random();
-                    
+
                     for (int i = 0; i < size; i++)
                     {
                         // Pick a random element from the pool to create correlations
                         result[i] = pool[random.Next(pool.Length)];
                     }
-                    
+
                     return result;
                 });
             })

@@ -23,16 +23,16 @@ restore:
     dotnet restore Requiem.slnx
 
 # Run all tests
-test:
-    dotnet test Requiem.slnx
+test-all:
+    dotnet test --solution Requiem.slnx
 
 # Run a specific test by containing word
 test WORD:
-    dotnet test Requiem.slnx --filter "FullyQualifiedName~{{WORD}}_"
+    dotnet test --solution Requiem.slnx --filter "FullyQualifiedName~{{WORD}}_"
 
 # Run tests with verbose output
 test-verbose:
-    dotnet test Requiem.slnx -v detailed
+    dotnet test --solution Requiem.slnx -v detailed
 
 # Format code using dotnet format
 format:
@@ -48,21 +48,21 @@ readme:
 
 # Pack the Requiem library as NuGet package
 pack:
-    dotnet pack Requiem/Requiem.csproj -c Release
+    dotnet pack Requiem/Requiem.csproj -c Release -o ./artifacts
 
 # Pack with specific version
 pack-version VERSION:
-    dotnet pack Requiem/Requiem.csproj -c Release /p:Version={{VERSION}}
+    dotnet pack Requiem/Requiem.csproj -c Release -o ./artifacts /p:Version={{VERSION}}
 
 # Check for outdated packages
 outdated:
     dotnet list Requiem.slnx package --outdated
 
 # Full CI pipeline: restore, build, test
-ci: restore build test
+ci: restore build test-all
 
 # Full local check: format, build, test, readme
-check: format build test readme
+check: format build test-all readme
 
 # Clean, restore, and build
 rebuild: clean restore build

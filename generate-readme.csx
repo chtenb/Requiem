@@ -36,21 +36,6 @@ foreach (var file in tutorialFiles)
     var content = File.ReadAllText(file);
     var fileName = Path.GetFileName(file);
     
-    // Extract class summary for section title
-    var summaryMatch = Regex.Match(content, @"/// <summary>\s*\n((?:///.*\n)*?)/// </summary>", RegexOptions.Multiline);
-    if (summaryMatch.Success)
-    {
-        var summary = summaryMatch.Groups[1].Value;
-        var lines = summary.Split('\n')
-            .Select(l => l.TrimStart('/', ' ').Trim())
-            .Where(l => !string.IsNullOrWhiteSpace(l));
-        
-        var title = lines.FirstOrDefault() ?? "";
-        
-        readme.AppendLine($"## {title}");
-        readme.AppendLine();
-    }
-    
     // Include the entire file content
     readme.AppendLine("```csharp");
     readme.AppendLine(content);
@@ -71,7 +56,7 @@ dotnet test
 
 ## Credits
 
-Requiem is built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides a simplified API and enhanced edge case bias to make property-based testing more accessible and effective.
+Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides a simplified API and enhanced edge case bias to make property-based testing more accessible and effective.
 
 ## License
 
