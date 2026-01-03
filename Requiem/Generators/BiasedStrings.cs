@@ -10,34 +10,36 @@ internal static class BiasedStrings
     public static readonly Gen<string> String = Gen.Frequency(
         (5, Gen.Const("a")),
         (5, Gen.Const("b")),
+        (5, Gen.Const("aa")),
         (5, Gen.Const(" ")),
         (5, Gen.Const("")),
         (5, Gen.Const("\n")),
         (20, Gen.String),
+        (10, _simpleNaughtyStrings),
         // NaughtyStrings categories
-        (3, _reservedStrings),
-        (3, _numericStrings),
-        (3, _specialCharacters),
-        (3, _unicodeSymbols),
-        (2, _unicodeSubscriptSuperscriptAccents),
-        (2, _quotationMarks),
-        (2, _twoByteCharacters),
-        (2, _specialUnicodeCharactersUnion),
-        (2, _japaneseEmoticons),
-        (2, _emoji),
-        (2, _rightToLeftStrings),
-        (2, _trickUnicode),
-        (2, _zalgoText),
-        (3, _scriptInjection),
-        (3, _sqlInjection),
-        (3, _serverCodeInjection),
-        (2, _fileInclusion),
-        (2, _knownCVEsAndVulnerabilities),
-        (2, _msdosWindowsSpecialFilenames),
-        (2, _scunthorpeProblem),
-        (2, _humaninjection),
-        (2, _terminalEscapeCodes),
-        (2, _iOSVulnerabilities)
+        (1, _reservedStrings),
+        (1, _numericStrings),
+        (1, _specialCharacters),
+        (1, _unicodeSymbols),
+        (1, _unicodeSubscriptSuperscriptAccents),
+        (1, _quotationMarks),
+        (1, _twoByteCharacters),
+        (1, _specialUnicodeCharactersUnion),
+        (1, _japaneseEmoticons),
+        (1, _emoji),
+        (1, _rightToLeftStrings),
+        (1, _trickUnicode),
+        (1, _zalgoText),
+        (1, _scriptInjection),
+        (1, _sqlInjection),
+        (1, _serverCodeInjection),
+        (1, _fileInclusion),
+        (1, _knownCVEsAndVulnerabilities),
+        (1, _msdosWindowsSpecialFilenames),
+        (1, _scunthorpeProblem),
+        (1, _humaninjection),
+        (1, _terminalEscapeCodes),
+        (1, _iOSVulnerabilities)
     );
 
     public static readonly Gen<string> FilePath = Gen.Frequency(
@@ -326,4 +328,68 @@ internal static class BiasedStrings
 
     private static readonly Gen<string> _iOSVulnerabilities =
         Gen.Int[0, TheNaughtyStrings.iOSVulnerabilities.Count - 1].Select(i => TheNaughtyStrings.iOSVulnerabilities[i]!);
+
+    // Simple (short) naughty strings
+    private static readonly string[] _simpleNaughtyStringsList = new[]
+    {
+        // Numbers as strings
+        "0",
+        "1",
+        "-1",
+        "999",
+        "NaN",
+        "Infinity",
+        
+        // Single special characters
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        ",",
+        ";",
+        ":",
+        "|",
+        
+        // Quotes
+        "'",
+        "\"",
+        "`",
+        
+        // Brackets
+        "[",
+        "]",
+        "{",
+        "}",
+        
+        // Slashes
+        "/",
+        "\\",
+        "//",
+        "\\\\",
+        
+        // Dots
+        ".",
+        "..",
+        "...",
+        
+        // Whitespace variations
+        " ",
+        "\t",
+        "\r\n",
+        " \t\n",
+        
+        // Path traversal (short)
+        "..",
+        "../",
+        "..\\",
+    };
+
+    private static readonly Gen<string> _simpleNaughtyStrings =
+        Gen.Int[0, _simpleNaughtyStringsList.Length - 1].Select(i => _simpleNaughtyStringsList[i]);
 }
