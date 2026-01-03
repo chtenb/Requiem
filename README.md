@@ -33,7 +33,7 @@ public class Tutorial
     Console.WriteLine($"Int: {number}, String: '{text}'");
 
     // Custom generators: Range, OneOf, Frequency
-    var positiveInt = Gens.Range(1, 100).Single();
+    var positiveInt = Gens.Between(1, 100).Single();
     var choice = Gens.OneOf("red", "green", "blue").Single();
     var weighted = Gens.Frequency(
         (80, Gens.Const("common")),
@@ -86,13 +86,13 @@ public class Tutorial
     // However, while filtering out invalid cases is often convenient in formulating generators,
     // when the invalid cases occur very often this is not very efficient. Generating the target
     // domain directly is more efficient.
-    var moreEfficient = Gens.Range(1, 999);
+    var moreEfficient = Gens.Between(1, 999);
 
     // Combine multiple generators with Zip
     Gens.Int.Zip(Gens.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
 
     // Use Chain for dependent generation, where the next value depends on previous
-    var gen = Gens.Range(1, 10).Chain(n => Gens.Range(n, n + 10));
+    var gen = Gens.Between(1, 10).Chain(n => Gens.Between(n, n + 10));
     gen.Check(x => Assert.IsTrue(x >= 1));
   }
 

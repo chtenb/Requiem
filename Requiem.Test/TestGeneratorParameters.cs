@@ -1,15 +1,24 @@
+using CsCheck;
+
 namespace Requiem.Test;
 
 public class TestGeneratorParameters
 {
+
+    [Test]
+    public void Repro()
+    {
+        _ = CsCheck.Gen.Double[10e14, 10e15].Single();
+    }
+
     [Test]
     public void Int()
     {
-        Gens.Range(0, 1000).Tuple()
+        Gens.Between(0, 1000).Tuple()
             .Filter((min, max) => min <= max)
             .Check((min, max) =>
             {
-                var gen = Gens.Range(min, max);
+                var gen = Gens.Between(min, max);
                 _ = gen.Single();
             }, iter: 10000);
     }
@@ -17,11 +26,11 @@ public class TestGeneratorParameters
     [Test]
     public void Long()
     {
-        Gens.Range(0L, 1000L).Tuple()
+        Gens.Between(0L, 1000L).Tuple()
             .Filter((min, max) => min <= max)
             .Check((min, max) =>
             {
-                var gen = Gens.Range(min, max);
+                var gen = Gens.Between(min, max);
                 _ = gen.Single();
             }, iter: 10000);
     }
@@ -29,11 +38,11 @@ public class TestGeneratorParameters
     [Test]
     public void Double()
     {
-        Gens.Range(0.0, 1000.0).Tuple()
+        Gens.Between(0.0, 1000.0).Tuple()
             .Filter((min, max) => min <= max)
             .Check((min, max) =>
             {
-                var gen = Gens.Range(min, max);
+                var gen = Gens.Between(min, max);
                 _ = gen.Single();
             }, iter: 10000);
     }
@@ -41,11 +50,11 @@ public class TestGeneratorParameters
     [Test]
     public void Float()
     {
-        Gens.Range(0.0f, 1000.0f).Tuple()
+        Gens.Between(0.0f, 1000.0f).Tuple()
             .Filter((min, max) => min <= max)
             .Check((min, max) =>
             {
-                var gen = Gens.Range(min, max);
+                var gen = Gens.Between(min, max);
                 _ = gen.Single();
             }, iter: 10000);
     }
@@ -53,11 +62,11 @@ public class TestGeneratorParameters
     [Test]
     public void Decimal()
     {
-        Gens.Range(0m, 1000m).Tuple()
+        Gens.Between(0m, 1000m).Tuple()
             .Filter((min, max) => min <= max)
             .Check((min, max) =>
             {
-                var gen = Gens.Range(min, max);
+                var gen = Gens.Between(min, max);
                 _ = gen.Single();
             }, iter: 10000);
     }
@@ -65,7 +74,7 @@ public class TestGeneratorParameters
     [Test]
     public void String()
     {
-        Gens.Range(0, 1000).Tuple()
+        Gens.Between(0, 1000).Tuple()
             .Filter((minLen, maxLen) => minLen <= maxLen)
             .Check((minLen, maxLen) =>
             {
@@ -77,7 +86,7 @@ public class TestGeneratorParameters
     [Test]
     public void Array()
     {
-        Gens.Range(0, 1000).Tuple()
+        Gens.Between(0, 1000).Tuple()
             .Filter((minLen, maxLen) => minLen <= maxLen)
             .Check((minLen, maxLen) =>
             {
@@ -89,7 +98,7 @@ public class TestGeneratorParameters
     [Test]
     public void List()
     {
-        Gens.Range(0, 1000).Tuple()
+        Gens.Between(0, 1000).Tuple()
             .Filter((minLen, maxLen) => minLen <= maxLen)
             .Check((minLen, maxLen) =>
             {

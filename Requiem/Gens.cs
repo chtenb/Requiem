@@ -17,35 +17,35 @@ public static partial class Gens
     /// Create an integer generator within the specified range (inclusive).
     /// Heavily biased towards boundaries, midpoint, and special values within the range.
     /// </summary>
-    public static Generator<int> Range(int min, int max) =>
+    public static Generator<int> Between(int min, int max) =>
         new(BiasedNumbers.IntRange(min, max));
 
     /// <summary>
     /// Create a long generator within the specified range (inclusive).
     /// Heavily biased towards boundaries, midpoint, and special values within the range.
     /// </summary>
-    public static Generator<long> Range(long min, long max) =>
+    public static Generator<long> Between(long min, long max) =>
         new(BiasedNumbers.LongRange(min, max));
 
     /// <summary>
     /// Create a double generator within the specified range.
     /// Heavily biased towards boundaries, midpoint, and special values within the range.
     /// </summary>
-    public static Generator<double> Range(double min, double max) =>
+    public static Generator<double> Between(double min, double max) =>
         new(BiasedNumbers.DoubleRange(min, max));
 
     /// <summary>
     /// Create a float generator within the specified range.
     /// Heavily biased towards boundaries, midpoint, and special values within the range.
     /// </summary>
-    public static Generator<float> Range(float min, float max) =>
+    public static Generator<float> Between(float min, float max) =>
         new(BiasedNumbers.FloatRange(min, max));
 
     /// <summary>
     /// Create a decimal generator within the specified range.
     /// Heavily biased towards boundaries, midpoint, and special values within the range.
     /// </summary>
-    public static Generator<decimal> Range(decimal min, decimal max) =>
+    public static Generator<decimal> Between(decimal min, decimal max) =>
         new(BiasedNumbers.DecimalRange(min, max));
 
     // ============================================================================
@@ -56,25 +56,25 @@ public static partial class Gens
     /// Integer generator with compound distribution including edge cases, powers of 2, and normal values.
     /// Biased towards: 0, ±1, ±2, int.Min/MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<int> Int => Range(int.MinValue, int.MaxValue);
+    public static Generator<int> Int => Between(int.MinValue, int.MaxValue);
 
     /// <summary>
     /// Positive integer generator (>= 0) with compound distribution including edge cases.
     /// Biased towards: 0, 1, 2, 10, 100, int.MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<int> PositiveInt => Range(0, int.MaxValue);
+    public static Generator<int> PositiveInt => Between(0, int.MaxValue);
 
     /// <summary>
     /// Long generator with compound distribution including edge cases and boundary values.
     /// Biased towards: 0, ±1, ±2, long.Min/MaxValue, powers of 2, and int boundaries.
     /// </summary>
-    public static Generator<long> Long => Range(long.MinValue, long.MaxValue);
+    public static Generator<long> Long => Between(long.MinValue, long.MaxValue);
 
     /// <summary>
     /// Positive long generator (>= 0) with compound distribution including edge cases.
     /// Biased towards: 0, 1, 2, 10, 100, long.MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<long> PositiveLong => Range(0L, long.MaxValue);
+    public static Generator<long> PositiveLong => Between(0L, long.MaxValue);
 
     // ============================================================================
     // Floating-Point Generators
@@ -84,37 +84,37 @@ public static partial class Gens
     /// Double generator with compound distribution including special values and edge cases.
     /// Biased towards: 0, ±1, NaN, ±Infinity, Epsilon, Min/MaxValue, and very small/large values.
     /// </summary>
-    public static Generator<double> Double => Range(double.MinValue, double.MaxValue);
+    public static Generator<double> Double => Between(double.MinValue, double.MaxValue);
 
     /// <summary>
     /// Positive double generator (>= 0) with compound distribution including special values and edge cases.
     /// Biased towards: 0, 1, 2, +Infinity, Epsilon, MaxValue, and very small/large values.
     /// </summary>
-    public static Generator<double> PositiveDouble => Range(0.0, double.MaxValue);
+    public static Generator<double> PositiveDouble => Between(0.0, double.MaxValue);
 
     /// <summary>
     /// Float generator with compound distribution including special values and edge cases.
     /// Biased towards: 0, ±1, NaN, ±Infinity, Epsilon, Min/MaxValue, and very small/large values.
     /// </summary>
-    public static Generator<float> Float => Range(float.MinValue, float.MaxValue);
+    public static Generator<float> Float => Between(float.MinValue, float.MaxValue);
 
     /// <summary>
     /// Positive float generator (>= 0) with compound distribution including special values and edge cases.
     /// Biased towards: 0, 1, 2, +Infinity, Epsilon, MaxValue, and very small/large values.
     /// </summary>
-    public static Generator<float> PositiveFloat => Range(0.0f, float.MaxValue);
+    public static Generator<float> PositiveFloat => Between(0.0f, float.MaxValue);
 
     /// <summary>
     /// Decimal generator with compound distribution including boundary values.
     /// Biased towards: 0, ±1, Min/MaxValue, and very small/large decimal values.
     /// </summary>
-    public static Generator<decimal> Decimal => Range(decimal.MinValue, decimal.MaxValue);
+    public static Generator<decimal> Decimal => Between(decimal.MinValue, decimal.MaxValue);
 
     /// <summary>
     /// Positive decimal generator (>= 0) with compound distribution including boundary values.
     /// Biased towards: 0, 1, 2, MaxValue, and very small/large decimal values.
     /// </summary>
-    public static Generator<decimal> PositiveDecimal => Range(0m, decimal.MaxValue);
+    public static Generator<decimal> PositiveDecimal => Between(0m, decimal.MaxValue);
 
     // ============================================================================
     // Basic Type Generators
