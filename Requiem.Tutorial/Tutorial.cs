@@ -18,18 +18,18 @@ public class Tutorial
   public void BasicGeneratorsAndEdgeCases()
   {
     // Generate single values
-    var number = Gens.Int.Single();
-    var text = Gens.String().Single();
+    var number = Gens.Int.Next();
+    var text = Gens.String().Next();
 
     Console.WriteLine($"Int: {number}, String: '{text}'");
 
     // Custom generators: Range, OneOf, Frequency
-    var positiveInt = Gens.Between(1, 100).Single();
-    var choice = Gens.OneOf("red", "green", "blue").Single();
-    var weighted = Gens.Frequency(
+    var positiveInt = Gens.Between(1, 100).Next();
+    var choice = Gens.Uniform("red", "green", "blue").Next();
+    var weighted = Gens.Weighted(
         (80, Gens.Const("common")),
         (20, Gens.Const("rare"))
-    ).Single();
+    ).Next();
 
     Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
   }

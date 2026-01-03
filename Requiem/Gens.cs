@@ -126,7 +126,7 @@ public static partial class Gens
     public static Generator<bool> Bool => new(Gen.Bool);
 
     /// <summary>
-    /// Byte generator with edge cases.
+    /// Byte generator.
     /// </summary>
     public static Generator<byte> Byte => new(Gen.Byte);
 
@@ -233,21 +233,37 @@ public static partial class Gens
         new(Gen.Const(value));
 
     /// <summary>
-    /// Create a generator that randomly selects one of the provided values with equal probability.
+    /// Toss a biased coin that returns true with probability k/n, i.e. k times out of n
     /// </summary>
-    public static Generator<T> OneOf<T>(params T[] values)
+    public static Generator<bool> Coin(int n = 2, int k = 1)
+    {
+        if (n < 2)
+            throw new ArgumentException("n must be bigger than 2");
+        if (k < 1)
+            throw new ArgumentException("k must be bigger than 1");
+        if (k >= n)
+            throw new ArgumentException("k must be smaller than n");
+        return new(Gen.Int[1, n].Select(c => c <= k));
+    }
+
+    /// <summary>
+    /// Create a generator that randomly selects one of the provided values with equal probability.
+    /// Values that are earlier in the list are considered simpler for shrinking purposes.
+    /// </summary>
+    public static Generator<T> Uniform<T>(params T[] values)
     {
         if (values.Length == 0)
             throw new ArgumentException("Must provide at least one choice", nameof(values));
-        
+
         return new(Gen.OneOfConst(values));
     }
 
     /// <summary>
     /// Create a generator that selects from multiple generators based on weighted frequencies.
     /// Weights are automatically normalized.
+    /// Values that are earlier in the list are considered simpler for shrinking purposes.
     /// </summary>
-    public static Generator<T> Frequency<T>(params (int Weight, Generator<T> Gen)[] choices)
+    public static Generator<T> Weighted<T>(params (int Weight, Generator<T> Gen)[] choices)
     {
         if (choices.Length == 0)
             throw new ArgumentException("Must provide at least one choice", nameof(choices));
@@ -259,13 +275,13 @@ public static partial class Gens
     // ============================================================================
     // Generator Combinators and Transformers
     // ============================================================================
-    
+
     public static Generator<T[]> Array<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
         new Generator<T[]>(BiasedCollections.Array(gen.Inner, minLength, maxLength));
 
     public static Generator<List<T>> List<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
         Array(gen, minLength, maxLength).Map(arr => new List<T>(arr));
-    
+
     /// <summary>
     /// Transform the generated values using a selector function.
     /// Pass-through to CsCheck's Select to preserve shrinking.

@@ -1,2 +1,4 @@
-- Make sure the Size parameters are correctly taken into account, so that shrinking really moves towards simpler low-entropy cases
-- Improve the string generators and add low entropy cases
+- Think about use of BiasedIntervals
+- Re-evaluate all distribution weights
+- Think about a strategy to analyze distribution and evaluate dimensional correlation
+- Add a suite of failing tests that ought to be found within a reasonable number of tries

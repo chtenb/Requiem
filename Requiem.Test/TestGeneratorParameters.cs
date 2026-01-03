@@ -19,7 +19,7 @@ public class TestGeneratorParameters
             .Check((min, max) =>
             {
                 var gen = Gens.Between(min, max);
-                _ = gen.Single();
+                _ = gen.Next();
             }, iter: 10000);
     }
 
@@ -31,7 +31,7 @@ public class TestGeneratorParameters
             .Check((min, max) =>
             {
                 var gen = Gens.Between(min, max);
-                _ = gen.Single();
+                _ = gen.Next();
             }, iter: 10000);
     }
 
@@ -43,7 +43,7 @@ public class TestGeneratorParameters
             .Check((min, max) =>
             {
                 var gen = Gens.Between(min, max);
-                _ = gen.Single();
+                _ = gen.Next();
             }, iter: 10000);
     }
 
@@ -55,7 +55,7 @@ public class TestGeneratorParameters
             .Check((min, max) =>
             {
                 var gen = Gens.Between(min, max);
-                _ = gen.Single();
+                _ = gen.Next();
             }, iter: 10000);
     }
 
@@ -67,7 +67,7 @@ public class TestGeneratorParameters
             .Check((min, max) =>
             {
                 var gen = Gens.Between(min, max);
-                _ = gen.Single();
+                _ = gen.Next();
             }, iter: 10000);
     }
 
@@ -79,7 +79,7 @@ public class TestGeneratorParameters
             .Check((minLen, maxLen) =>
             {
                 var stringGen = Gens.String(minLen, maxLen);
-                _ = stringGen.Single();
+                _ = stringGen.Next();
             }, iter: 10000);
     }
 
@@ -91,7 +91,7 @@ public class TestGeneratorParameters
             .Check((minLen, maxLen) =>
             {
                 var arrayGen = Gens.Int.Array(minLen, maxLen);
-                _ = arrayGen.Single();
+                _ = arrayGen.Next();
             }, iter: 10000);
     }
 
@@ -103,7 +103,7 @@ public class TestGeneratorParameters
             .Check((minLen, maxLen) =>
             {
                 var listGen = Gens.Int.List(minLen, maxLen);
-                _ = listGen.Single();
+                _ = listGen.Next();
             }, iter: 10000);
     }
 }

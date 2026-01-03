@@ -18,7 +18,7 @@ public sealed class Generator<T>
     /// <summary>
     /// Generate a single value (convenience method).
     /// </summary>
-    public T Single() => Inner.Single();
+    public T Next() => Inner.Single();
 
     /// <summary>
     /// Check that a property holds for all generated values.
