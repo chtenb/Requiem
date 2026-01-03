@@ -165,7 +165,10 @@ public static partial class Gens
     /// String generator with compound distribution including edge cases and problematic strings.
     /// Biased towards: simple strings and naughty strings.
     /// </summary>
-    public static Generator<string> String => new(BiasedStrings.String);
+    /// <param name="minLength">Minimum string length (inclusive). Default is 0.</param>
+    /// <param name="maxLength">Maximum string length (inclusive). Default is 100.</param>
+    public static Generator<string> String(int minLength = 0, int maxLength = 100) =>
+        new(BiasedStrings.String(minLength, maxLength));
 
     // ============================================================================
     // Specialized String Generators

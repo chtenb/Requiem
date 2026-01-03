@@ -7,40 +7,68 @@ namespace Requiem.Generators;
 
 internal static class BiasedStrings
 {
-    public static readonly Gen<string> String = Gen.Frequency(
-        (5, Gen.Const("a")),
-        (5, Gen.Const("b")),
-        (5, Gen.Const("aa")),
-        (5, Gen.Const(" ")),
-        (5, Gen.Const("")),
-        (5, Gen.Const("\n")),
-        (20, Gen.String),
-        (10, _simpleNaughtyStrings),
-        // NaughtyStrings categories
-        (1, _reservedStrings),
-        (1, _numericStrings),
-        (1, _specialCharacters),
-        (1, _unicodeSymbols),
-        (1, _unicodeSubscriptSuperscriptAccents),
-        (1, _quotationMarks),
-        (1, _twoByteCharacters),
-        (1, _specialUnicodeCharactersUnion),
-        (1, _japaneseEmoticons),
-        (1, _emoji),
-        (1, _rightToLeftStrings),
-        (1, _trickUnicode),
-        (1, _zalgoText),
-        (1, _scriptInjection),
-        (1, _sqlInjection),
-        (1, _serverCodeInjection),
-        (1, _fileInclusion),
-        (1, _knownCVEsAndVulnerabilities),
-        (1, _msdosWindowsSpecialFilenames),
-        (1, _scunthorpeProblem),
-        (1, _humaninjection),
-        (1, _terminalEscapeCodes),
-        (1, _iOSVulnerabilities)
-    );
+    public static Gen<string> String(int minLength = 0, int maxLength = 100)
+    {
+        var generators = new List<(int, Gen<string>)>();
+
+        // Empty string only if minLength allows it
+        if (minLength == 0)
+            generators.Add((5, Gen.Const("")));
+
+        // Single character strings only if minLength allows it
+        if (minLength <= 1 && maxLength >= 1)
+        {
+            generators.Add((5, Gen.Const("a")));
+            generators.Add((5, Gen.Const("b")));
+            generators.Add((5, Gen.Const(" ")));
+            generators.Add((5, Gen.Const("\n")));
+        }
+
+        // Two character strings only if minLength allows it
+        if (minLength <= 2 && maxLength >= 2)
+            generators.Add((5, Gen.Const("aa")));
+
+        // Random strings within bounds - this is our fallback that always works
+        generators.Add((20, Gen.String[minLength, maxLength]));
+
+        // Helper to adjust string length to fit within bounds
+        string AdjustLength(string s)
+        {
+            if (s.Length < minLength)
+                return s + new string('x', minLength - s.Length);
+            if (s.Length > maxLength)
+                return s.Substring(0, maxLength);
+            return s;
+        }
+
+        // Add naughty string generators with length adjustment
+        generators.Add((10, _simpleNaughtyStrings.Select(AdjustLength)));
+        generators.Add((1, _reservedStrings.Select(AdjustLength)));
+        generators.Add((1, _numericStrings.Select(AdjustLength)));
+        generators.Add((1, _specialCharacters.Select(AdjustLength)));
+        generators.Add((1, _unicodeSymbols.Select(AdjustLength)));
+        generators.Add((1, _unicodeSubscriptSuperscriptAccents.Select(AdjustLength)));
+        generators.Add((1, _quotationMarks.Select(AdjustLength)));
+        generators.Add((1, _twoByteCharacters.Select(AdjustLength)));
+        generators.Add((1, _specialUnicodeCharactersUnion.Select(AdjustLength)));
+        generators.Add((1, _japaneseEmoticons.Select(AdjustLength)));
+        generators.Add((1, _emoji.Select(AdjustLength)));
+        generators.Add((1, _rightToLeftStrings.Select(AdjustLength)));
+        generators.Add((1, _trickUnicode.Select(AdjustLength)));
+        generators.Add((1, _zalgoText.Select(AdjustLength)));
+        generators.Add((1, _scriptInjection.Select(AdjustLength)));
+        generators.Add((1, _sqlInjection.Select(AdjustLength)));
+        generators.Add((1, _serverCodeInjection.Select(AdjustLength)));
+        generators.Add((1, _fileInclusion.Select(AdjustLength)));
+        generators.Add((1, _knownCVEsAndVulnerabilities.Select(AdjustLength)));
+        generators.Add((1, _msdosWindowsSpecialFilenames.Select(AdjustLength)));
+        generators.Add((1, _scunthorpeProblem.Select(AdjustLength)));
+        generators.Add((1, _humaninjection.Select(AdjustLength)));
+        generators.Add((1, _terminalEscapeCodes.Select(AdjustLength)));
+        generators.Add((1, _iOSVulnerabilities.Select(AdjustLength)));
+
+        return Gen.Frequency([.. generators]);
+    }
 
     public static readonly Gen<string> FilePath = Gen.Frequency(
         (15, Gen.OneOfConst(

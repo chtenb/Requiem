@@ -17,9 +17,9 @@ public class Tutorial
   [Test]
   public void BasicGeneratorsAndEdgeCases()
   {
-    // Generate single values 
+    // Generate single values
     var number = Gens.Int.Single();
-    var text = Gens.String.Single();
+    var text = Gens.String().Single();
 
     Console.WriteLine($"Int: {number}, String: '{text}'");
 
@@ -49,17 +49,17 @@ public class Tutorial
     });
 
     // Custom number of iterations: run 10,000 times instead of the default 1000
-    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), iter: 10000);
+    Gens.String().Check(s => Assert.IsTrue(s.Length >= 0), iter: 10000);
 
     // Failed tests will report the seed of the smallest counter example it found in the alotted
     // number of iterations You can provide this seed to be used as initial seed, for easier
     // debugging, or for further shrinking of the counter example
-    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
+    Gens.String().Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
         
     // The properties are run in parallel on multiple threads by default, to speed up the evaluation
     // This means the generators and properties must be thread safe.
     // To make the evaluation single-threaded, set the number of threads to 1.
-    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), threads: 1);
+    Gens.String().Check(s => Assert.IsTrue(s.Length >= 0), threads: 1);
   }
 
   /// <summary>
@@ -105,7 +105,7 @@ public class Tutorial
     Gens.Int.Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
 
     // Mixed tuples with Zip
-    Gens.String.Zip(Gens.Int, Gens.Bool).Check((str, num, flag) =>
+    Gens.String().Zip(Gens.Int, Gens.Bool).Check((str, num, flag) =>
     {
       Assert.IsTrue(str != null);
       // Handle int.MinValue edge case (can't be negated)

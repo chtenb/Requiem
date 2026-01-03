@@ -73,7 +73,8 @@ internal static class BiasedNumbers
         }
         IGen<int>? nearPowers = nearPowersOfTwo.Count > 0 ? Gen.OneOfConst(nearPowersOfTwo.ToArray()) : null;
 
-        IGen<int> uniform = Gen.Int[min, max];
+        // Gen.Int throws when passing int.MinValue and int.MaxValue
+        IGen<int> uniform = min == int.MinValue && max == int.MaxValue ? Gen.Int : Gen.Int[min, max];
 
         // Build final distribution
         var choices = new List<(int, IGen<int>)>
@@ -192,11 +193,11 @@ internal static class BiasedNumbers
 
         // Collect generators for each category
         IGen<double> boundaries = Gen.OneOfConst(min, max);
-        
+
         IGen<double>? nearMin = !double.IsInfinity(min) && !double.IsInfinity(max)
             ? Gen.Double.Select(eps => min + eps * (max - min) * 0.001)
             : null;
-        
+
         IGen<double>? nearMax = !double.IsInfinity(min) && !double.IsInfinity(max)
             ? Gen.Double.Select(eps => max - eps * (max - min) * 0.001)
             : null;
@@ -252,8 +253,8 @@ internal static class BiasedNumbers
         IGen<double>? veryLarge = veryLargeValues.Count > 0 ? Gen.OneOfConst(veryLargeValues.ToArray()) : null;
 
         // Special values from Gen.Double.Special - collect valid ones
-        var specialGenValues = new[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity, 
-            double.Epsilon, -double.Epsilon, double.MaxValue, double.MinValue, 0.0, 1.0, -1.0, 
+        var specialGenValues = new[] { double.NaN, double.PositiveInfinity, double.NegativeInfinity,
+            double.Epsilon, -double.Epsilon, double.MaxValue, double.MinValue, 0.0, 1.0, -1.0,
             0.5, -0.5, 2.0, -2.0, 10.0, -10.0, 100.0, -100.0 }
             .Where(d => !double.IsNaN(d) && d >= min && d <= max)
             .Distinct()
@@ -295,11 +296,11 @@ internal static class BiasedNumbers
 
         // Collect generators for each category
         IGen<float> boundaries = Gen.OneOfConst(min, max);
-        
+
         IGen<float>? nearMin = !float.IsInfinity(min) && !float.IsInfinity(max)
             ? Gen.Float.Select(eps => min + eps * (max - min) * 0.001f)
             : null;
-        
+
         IGen<float>? nearMax = !float.IsInfinity(min) && !float.IsInfinity(max)
             ? Gen.Float.Select(eps => max - eps * (max - min) * 0.001f)
             : null;
@@ -355,8 +356,8 @@ internal static class BiasedNumbers
         IGen<float>? veryLarge = veryLargeValues.Count > 0 ? Gen.OneOfConst(veryLargeValues.ToArray()) : null;
 
         // Special values from Gen.Float.Special - collect valid ones
-        var specialGenValues = new[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity, 
-            float.Epsilon, -float.Epsilon, float.MaxValue, float.MinValue, 0.0f, 1.0f, -1.0f, 
+        var specialGenValues = new[] { float.NaN, float.PositiveInfinity, float.NegativeInfinity,
+            float.Epsilon, -float.Epsilon, float.MaxValue, float.MinValue, 0.0f, 1.0f, -1.0f,
             0.5f, -0.5f, 2.0f, -2.0f, 10.0f, -10.0f, 100.0f, -100.0f }
             .Where(f => !float.IsNaN(f) && f >= min && f <= max)
             .Distinct()
