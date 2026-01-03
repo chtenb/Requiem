@@ -2,20 +2,8 @@ using CsCheck;
 
 namespace Requiem.Generators;
 
-/// <summary>
-/// Biased generators for collections (arrays, lists, etc.).
-/// Heavily skewed towards edge cases and problematic collection scenarios.
-/// </summary>
 internal static class BiasedCollections
 {
-    /// <summary>
-    /// Array generator heavily skewed towards edge cases.
-    /// Includes empty arrays, single-element arrays, arrays with duplicates,
-    /// very large arrays, and arrays with specific patterns.
-    /// </summary>
-    /// <param name="elementGen">Generator for array elements</param>
-    /// <param name="minLength">Minimum array length (default: 0)</param>
-    /// <param name="maxLength">Maximum array length (default: 100)</param>
     public static Gen<T[]> Array<T>(Gen<T> elementGen, int minLength, int maxLength)
     {
         var generators = new List<(int, Gen<T[]>)>();
@@ -79,10 +67,6 @@ internal static class BiasedCollections
             .SelectMany(size => elementGen.Array[size, size]);
     }
 
-    /// <summary>
-    /// Generates arrays where some positions have the same element, creating dimensional correlations.
-    /// This simulates scenarios where certain values appear at multiple indices.
-    /// </summary>
     private static Gen<T[]> ArrayWithDimensionalCorrelations<T>(Gen<T> elementGen, int minLength, int maxLength) =>
         Gen.Int[minLength, maxLength]
             .Select(Gen.Double[0.2, 0.6], (size, correlationRate) =>

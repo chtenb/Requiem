@@ -2,15 +2,8 @@ using CsCheck;
 
 namespace Requiem.Generators;
 
-/// <summary>
-/// Biased generators for temporal types (DateTime, TimeSpan, DateTimeOffset).
-/// Heavily skewed towards edge cases and boundary values.
-/// </summary>
 internal static class BiasedTemporal
 {
-    /// <summary>
-    /// DateTime generator skewed towards edge cases and problematic dates.
-    /// </summary>
     public static readonly Gen<DateTime> DateTime = Gen.Frequency(
         (20, Gen.OneOfConst(
             System.DateTime.MinValue,
@@ -33,9 +26,6 @@ internal static class BiasedTemporal
         (30, Gen.DateTime)
     );
 
-    /// <summary>
-    /// TimeSpan generator skewed towards edge cases.
-    /// </summary>
     public static readonly Gen<TimeSpan> TimeSpan = Gen.Frequency(
         (25, Gen.OneOfConst(
             System.TimeSpan.Zero,
@@ -61,9 +51,6 @@ internal static class BiasedTemporal
         (40, Gen.TimeSpan)
     );
 
-    /// <summary>
-    /// DateTimeOffset generator with timezone edge cases.
-    /// </summary>
     public static readonly Gen<DateTimeOffset> DateTimeOffset = Gen.Frequency(
         (20, Gen.OneOfConst(
             System.DateTimeOffset.MinValue,

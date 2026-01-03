@@ -2,15 +2,8 @@ using CsCheck;
 
 namespace Requiem.Generators;
 
-/// <summary>
-/// Biased generators for strings including basic string edge cases and domain-specific strings.
-/// Heavily skewed towards edge cases and problematic values.
-/// </summary>
 internal static class BiasedStrings
 {
-    /// <summary>
-    /// String generator skewed towards edge cases.
-    /// </summary>
     public static readonly Gen<string> String = Gen.Frequency(
         (25, Gen.OneOfConst(
             "", " ", "  ", "\t", "\n", "\r\n",
@@ -32,9 +25,6 @@ internal static class BiasedStrings
         (40, Gen.String)
     );
 
-    /// <summary>
-    /// String generator biased towards dangerous/malicious input patterns.
-    /// </summary>
     public static readonly Gen<string> DangerousString = Gen.Frequency(
         (20, SqlInjectionPatterns()),
         (15, XssPatterns()),
@@ -44,9 +34,6 @@ internal static class BiasedStrings
         (30, Gen.String)
     );
 
-    /// <summary>
-    /// File path generator with edge cases.
-    /// </summary>
     public static readonly Gen<string> FilePath = Gen.Frequency(
         (15, Gen.OneOfConst(
             "",
@@ -66,9 +53,6 @@ internal static class BiasedStrings
         (40, Gen.String.AlphaNumeric.Select(s => $"C:\\temp\\{s}.txt"))
     );
 
-    /// <summary>
-    /// Email address generator with edge cases.
-    /// </summary>
     public static readonly Gen<string> Email = Gen.Frequency(
         (10, Gen.OneOfConst(
             "",
@@ -87,9 +71,6 @@ internal static class BiasedStrings
             $"{local}@{domain}.com"))
     );
 
-    /// <summary>
-    /// URL generator with edge cases.
-    /// </summary>
     public static readonly Gen<string> Url = Gen.Frequency(
         (10, Gen.OneOfConst(
             "",
@@ -109,9 +90,6 @@ internal static class BiasedStrings
         (55, Gen.String.AlphaNumeric.Select(s => $"https://{s}.com"))
     );
 
-    /// <summary>
-    /// IP address generator (v4) with edge cases.
-    /// </summary>
     public static readonly Gen<string> IPv4 = Gen.Frequency(
         (20, Gen.OneOfConst(
             "0.0.0.0",
@@ -133,9 +111,6 @@ internal static class BiasedStrings
             $"{a}.{b}.{c}.{d}"))
     );
 
-    /// <summary>
-    /// Credit card number generator (for testing).
-    /// </summary>
     public static readonly Gen<string> CreditCardNumber = Gen.Frequency(
         (20, Gen.OneOfConst(
             "4111111111111111",
@@ -150,9 +125,6 @@ internal static class BiasedStrings
         (70, Gen.Long[1000000000000000L, 9999999999999999L].Select(n => n.ToString()))
     );
 
-    /// <summary>
-    /// Phone number generator with various formats.
-    /// </summary>
     public static readonly Gen<string> PhoneNumber = Gen.Frequency(
         (15, Gen.OneOfConst(
             "",
@@ -168,9 +140,6 @@ internal static class BiasedStrings
         (75, Gen.Long[1000000000L, 9999999999L].Select(n => n.ToString()))
     );
 
-    /// <summary>
-    /// JSON string generator with edge cases.
-    /// </summary>
     public static readonly Gen<string> Json = Gen.Frequency(
         (15, Gen.OneOfConst(
             "{}",
@@ -190,9 +159,6 @@ internal static class BiasedStrings
         (65, Gen.String.Select(s => $"{{\"key\":\"{s}\"}}"))
     );
 
-    /// <summary>
-    /// XML string generator with edge cases.
-    /// </summary>
     public static readonly Gen<string> Xml = Gen.Frequency(
         (15, Gen.OneOfConst(
             "<root/>",

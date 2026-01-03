@@ -5,7 +5,7 @@ namespace Requiem;
 /// <summary>
 /// Analysis extension methods for Generator<T>.
 /// </summary>
-public static partial class GeneratorExtensions
+public static partial class GeneratorAnalysis
 {
     /// <summary>
     /// Analyze the distribution of generated values.
