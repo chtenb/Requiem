@@ -1,16 +1,43 @@
+#pragma warning disable CS8620 // Argument cannot be used for parameter due to differences in the nullability of reference types.
+
 using CsCheck;
+using NaughtyStrings;
 
 namespace Requiem.Generators;
 
 internal static class BiasedStrings
 {
     public static readonly Gen<string> String = Gen.Frequency(
-        (10, Gen.Const("a")),
-        (10, Gen.Const("b")),
-        (10, Gen.Const(" ")),
-        (10, Gen.Const("")),
-        (10, Gen.Const("\n")),
-        (50, Gen.String)
+        (5, Gen.Const("a")),
+        (5, Gen.Const("b")),
+        (5, Gen.Const(" ")),
+        (5, Gen.Const("")),
+        (5, Gen.Const("\n")),
+        (20, Gen.String),
+        // NaughtyStrings categories
+        (3, _reservedStrings),
+        (3, _numericStrings),
+        (3, _specialCharacters),
+        (3, _unicodeSymbols),
+        (2, _unicodeSubscriptSuperscriptAccents),
+        (2, _quotationMarks),
+        (2, _twoByteCharacters),
+        (2, _specialUnicodeCharactersUnion),
+        (2, _japaneseEmoticons),
+        (2, _emoji),
+        (2, _rightToLeftStrings),
+        (2, _trickUnicode),
+        (2, _zalgoText),
+        (3, _scriptInjection),
+        (3, _sqlInjection),
+        (3, _serverCodeInjection),
+        (2, _fileInclusion),
+        (2, _knownCVEsAndVulnerabilities),
+        (2, _msdosWindowsSpecialFilenames),
+        (2, _scunthorpeProblem),
+        (2, _humaninjection),
+        (2, _terminalEscapeCodes),
+        (2, _iOSVulnerabilities)
     );
 
     public static readonly Gen<string> FilePath = Gen.Frequency(
@@ -229,4 +256,74 @@ internal static class BiasedStrings
             "<root><>&\"'</root>",
             "<root>&#60;&#62;&#38;</root>"
         );
+
+    // NaughtyStrings category generators
+    private static readonly Gen<string> _reservedStrings =
+        Gen.Int[0, TheNaughtyStrings.ReservedStrings.Count - 1].Select(i => TheNaughtyStrings.ReservedStrings[i]!);
+
+    private static readonly Gen<string> _numericStrings =
+        Gen.Int[0, TheNaughtyStrings.NumericStrings.Count - 1].Select(i => TheNaughtyStrings.NumericStrings[i]!);
+
+    private static readonly Gen<string> _specialCharacters =
+        Gen.Int[0, TheNaughtyStrings.SpecialCharacters.Count - 1].Select(i => TheNaughtyStrings.SpecialCharacters[i]!);
+
+    private static readonly Gen<string> _unicodeSymbols =
+        Gen.Int[0, TheNaughtyStrings.UnicodeSymbols.Count - 1].Select(i => TheNaughtyStrings.UnicodeSymbols[i]!);
+
+    private static readonly Gen<string> _unicodeSubscriptSuperscriptAccents =
+        Gen.Int[0, TheNaughtyStrings.UnicodeSubscriptSuperscriptAccents.Count - 1].Select(i => TheNaughtyStrings.UnicodeSubscriptSuperscriptAccents[i]!);
+
+    private static readonly Gen<string> _quotationMarks =
+        Gen.Int[0, TheNaughtyStrings.QuotationMarks.Count - 1].Select(i => TheNaughtyStrings.QuotationMarks[i]!);
+
+    private static readonly Gen<string> _twoByteCharacters =
+        Gen.Int[0, TheNaughtyStrings.TwoByteCharacters.Count - 1].Select(i => TheNaughtyStrings.TwoByteCharacters[i]!);
+
+    private static readonly Gen<string> _specialUnicodeCharactersUnion =
+        Gen.Int[0, TheNaughtyStrings.SpecialUnicodeCharactersUnion.Count - 1].Select(i => TheNaughtyStrings.SpecialUnicodeCharactersUnion[i]!);
+
+    private static readonly Gen<string> _japaneseEmoticons =
+        Gen.Int[0, TheNaughtyStrings.JapaneseEmoticons.Count - 1].Select(i => TheNaughtyStrings.JapaneseEmoticons[i]!);
+
+    private static readonly Gen<string> _emoji =
+        Gen.Int[0, TheNaughtyStrings.Emoji.Count - 1].Select(i => TheNaughtyStrings.Emoji[i]!);
+
+    private static readonly Gen<string> _rightToLeftStrings =
+        Gen.Int[0, TheNaughtyStrings.RightToLeftStrings.Count - 1].Select(i => TheNaughtyStrings.RightToLeftStrings[i]!);
+
+    private static readonly Gen<string> _trickUnicode =
+        Gen.Int[0, TheNaughtyStrings.TrickUnicode.Count - 1].Select(i => TheNaughtyStrings.TrickUnicode[i]!);
+
+    private static readonly Gen<string> _zalgoText =
+        Gen.Int[0, TheNaughtyStrings.ZalgoText.Count - 1].Select(i => TheNaughtyStrings.ZalgoText[i]!);
+
+    private static readonly Gen<string> _scriptInjection =
+        Gen.Int[0, TheNaughtyStrings.ScriptInjection.Count - 1].Select(i => TheNaughtyStrings.ScriptInjection[i]!);
+
+    private static readonly Gen<string> _sqlInjection =
+        Gen.Int[0, TheNaughtyStrings.SQLInjection.Count - 1].Select(i => TheNaughtyStrings.SQLInjection[i]!);
+
+    private static readonly Gen<string> _serverCodeInjection =
+        Gen.Int[0, TheNaughtyStrings.ServerCodeInjection.Count - 1].Select(i => TheNaughtyStrings.ServerCodeInjection[i]!);
+
+    private static readonly Gen<string> _fileInclusion =
+        Gen.Int[0, TheNaughtyStrings.FileInclusion.Count - 1].Select(i => TheNaughtyStrings.FileInclusion[i]!);
+
+    private static readonly Gen<string> _knownCVEsAndVulnerabilities =
+        Gen.Int[0, TheNaughtyStrings.KnownCVEsandVulnerabilities.Count - 1].Select(i => TheNaughtyStrings.KnownCVEsandVulnerabilities[i]!);
+
+    private static readonly Gen<string> _msdosWindowsSpecialFilenames =
+        Gen.Int[0, TheNaughtyStrings.MSDOSWindowsSpecialFilenames.Count - 1].Select(i => TheNaughtyStrings.MSDOSWindowsSpecialFilenames[i]!);
+
+    private static readonly Gen<string> _scunthorpeProblem =
+        Gen.Int[0, TheNaughtyStrings.ScunthorpeProblem.Count - 1].Select(i => TheNaughtyStrings.ScunthorpeProblem[i]!);
+
+    private static readonly Gen<string> _humaninjection =
+        Gen.Int[0, TheNaughtyStrings.Humaninjection.Count - 1].Select(i => TheNaughtyStrings.Humaninjection[i]!);
+
+    private static readonly Gen<string> _terminalEscapeCodes =
+        Gen.Int[0, TheNaughtyStrings.Terminalescapecodes.Count - 1].Select(i => TheNaughtyStrings.Terminalescapecodes[i]!);
+
+    private static readonly Gen<string> _iOSVulnerabilities =
+        Gen.Int[0, TheNaughtyStrings.iOSVulnerabilities.Count - 1].Select(i => TheNaughtyStrings.iOSVulnerabilities[i]!);
 }
