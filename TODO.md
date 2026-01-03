@@ -1,3 +1,4 @@
+- Consider making all generators in API methods, for future compatibility
 - Think about use of BiasedIntervals
 - Re-evaluate all distribution weights
 - Think about a strategy to analyze distribution and evaluate dimensional correlation

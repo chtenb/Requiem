@@ -7,7 +7,7 @@ namespace Requiem;
 /// Factory for creating generators with built-in edge case bias.
 /// Provides pre-configured generators for common types with comprehensive edge case coverage.
 /// </summary>
-public static partial class Gens
+public static partial class Generate
 {
     // ============================================================================
     // Range Factory Methods
