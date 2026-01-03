@@ -2,3 +2,4 @@
 - Re-evaluate all distribution weights
 - Think about a strategy to analyze distribution and evaluate dimensional correlation
 - Add a suite of failing tests that ought to be found within a reasonable number of tries
+- After an example has been found, I'd like to add some seconds to the running time to look for shrinks

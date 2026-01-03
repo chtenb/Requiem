@@ -1,10 +1,9 @@
 # Requiem
 
 A property-based testing library for C# with built-in edge case bias. Requiem makes it easier to find bugs by automatically generating problematic values that often break code.
+Works with any unit test framework.
 
 ## Tutorial
-
-The following tutorials demonstrate Requiem's features through complete, runnable examples.
 ```csharp
 namespace Requiem.Tutorial;
 
@@ -26,18 +25,18 @@ public class Tutorial
   public void BasicGeneratorsAndEdgeCases()
   {
     // Generate single values
-    var number = Gens.Int.Single();
-    var text = Gens.String().Single();
+    var number = Gens.Int.Next();
+    var text = Gens.String().Next();
 
     Console.WriteLine($"Int: {number}, String: '{text}'");
 
     // Custom generators: Range, OneOf, Frequency
-    var positiveInt = Gens.Between(1, 100).Single();
-    var choice = Gens.OneOf("red", "green", "blue").Single();
-    var weighted = Gens.Frequency(
+    var positiveInt = Gens.Between(1, 100).Next();
+    var choice = Gens.Uniform("red", "green", "blue").Next();
+    var weighted = Gens.Weighted(
         (80, Gens.Const("common")),
         (20, Gens.Const("rare"))
-    ).Single();
+    ).Next();
 
     Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
   }
@@ -162,16 +161,12 @@ public class Tutorial
 
 ## Running the Examples
 
-All examples are in the `Requiem.Tutorial` project. To run them:
-
-```bash
-cd lib/Requiem/Requiem.Tutorial
-dotnet test
-```
+The generator API can be found in Gens.cs. Have a look.
 
 ## Credits
 
-- Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides its own opiniated API and generators with enhanced edge case bias to make property-based testing more effective.
+- Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#.
+  Requiem provides its own opiniated API and generators with enhanced edge case bias to make property-based testing more effective.
 - Requiem utilizes the list of [NaughtyStrings](https://github.com/SimonCropp/NaughtyStrings) to help finding edge cases in string generation.
 
 ## License
