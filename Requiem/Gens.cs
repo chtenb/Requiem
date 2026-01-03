@@ -235,8 +235,13 @@ public static partial class Gens
     /// <summary>
     /// Create a generator that randomly selects one of the provided values with equal probability.
     /// </summary>
-    public static Generator<T> OneOf<T>(params T[] values) =>
-        new(Gen.OneOfConst(values));
+    public static Generator<T> OneOf<T>(params T[] values)
+    {
+        if (values.Length == 0)
+            throw new ArgumentException("Must provide at least one choice", nameof(values));
+        
+        return new(Gen.OneOfConst(values));
+    }
 
     /// <summary>
     /// Create a generator that selects from multiple generators based on weighted frequencies.
