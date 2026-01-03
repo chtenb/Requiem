@@ -5,7 +5,6 @@ A property-based testing library for C# with built-in edge case bias. Requiem ma
 ## Tutorial
 
 The following tutorials demonstrate Requiem's features through complete, runnable examples.
-
 ```csharp
 namespace Requiem.Tutorial;
 
@@ -172,9 +171,8 @@ dotnet test
 
 ## Credits
 
-Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides a simplified API and enhanced edge case bias to make property-based testing more accessible and effective.
-
-Requiem utilizes the list of [NaughtyStrings](https://github.com/SimonCropp/NaughtyStrings) to help finding edge cases in string generation.
+- Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#. Requiem provides its own opiniated API and generators with enhanced edge case bias to make property-based testing more effective.
+- Requiem utilizes the list of [NaughtyStrings](https://github.com/SimonCropp/NaughtyStrings) to help finding edge cases in string generation.
 
 ## License
 
