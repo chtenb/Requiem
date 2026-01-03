@@ -163,16 +163,9 @@ public static partial class Gens
 
     /// <summary>
     /// String generator with compound distribution including edge cases and problematic strings.
-    /// Biased towards: empty, whitespace, null-like strings, very long strings, special characters, and Unicode edge cases.
+    /// Biased towards: simple strings and naughty strings.
     /// </summary>
     public static Generator<string> String => new(BiasedStrings.String);
-
-    /// <summary>
-    /// String generator biased towards dangerous/malicious input patterns.
-    /// Includes: SQL injection, XSS, path traversal, format string attacks, and general edge cases.
-    /// Use for security and input validation testing.
-    /// </summary>
-    public static Generator<string> DangerousString => new(BiasedStrings.DangerousString);
 
     // ============================================================================
     // Specialized String Generators

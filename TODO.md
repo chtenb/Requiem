@@ -1,0 +1,2 @@
+- Make sure the Size parameters are correctly taken into account, so that shrinking really moves towards simpler low-entropy cases
+- Improve the string generators and add low entropy cases

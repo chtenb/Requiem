@@ -5,33 +5,12 @@ namespace Requiem.Generators;
 internal static class BiasedStrings
 {
     public static readonly Gen<string> String = Gen.Frequency(
-        (25, Gen.OneOfConst(
-            "", " ", "  ", "\t", "\n", "\r\n",
-            "null", "NULL", "undefined",
-            "0", "1", "-1",
-            "true", "false"
-        )),
-        (15, Gen.OneOfConst(
-            new string('a', 1000),
-            new string('x', 10000),
-            new string(' ', 100)
-        )),
-        (10, Gen.OneOfConst(
-            "\\", "/", "\"", "'", "`",
-            "<", ">", "&", "|",
-            "\0", "\u0000"
-        )),
-        (10, UnicodeEdgeCases()),
-        (40, Gen.String)
-    );
-
-    public static readonly Gen<string> DangerousString = Gen.Frequency(
-        (20, SqlInjectionPatterns()),
-        (15, XssPatterns()),
-        (15, PathTraversalPatterns()),
-        (10, FormatStringPatterns()),
-        (10, String),
-        (30, Gen.String)
+        (10, Gen.Const("a")),
+        (10, Gen.Const("b")),
+        (10, Gen.Const(" ")),
+        (10, Gen.Const("")),
+        (10, Gen.Const("\n")),
+        (50, Gen.String)
     );
 
     public static readonly Gen<string> FilePath = Gen.Frequency(
@@ -91,7 +70,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> IPv4 = Gen.Frequency(
-        (20, Gen.OneOfConst(
+        (30, Gen.OneOfConst(
             "0.0.0.0",
             "127.0.0.1",
             "255.255.255.255",
@@ -99,13 +78,11 @@ internal static class BiasedStrings
             "10.0.0.1",
             "172.16.0.1",
             "224.0.0.1",
-            "169.254.0.1"
-        )),
-        (10, Gen.OneOfConst(
+            "169.254.0.1",
             "256.0.0.1",
             "1.2.3",
             "1.2.3.4.5",
-            "-1.0.0.1"
+            "1.0.0.1"
         )),
         (70, Gen.Byte.Select(Gen.Byte, Gen.Byte, Gen.Byte, (a, b, c, d) =>
             $"{a}.{b}.{c}.{d}"))
@@ -176,40 +153,6 @@ internal static class BiasedStrings
         (10, XmlWithEntities()),
         (65, Gen.String.Select(s => $"<root>{s}</root>"))
     );
-
-    private static Gen<string> SqlInjectionPatterns() =>
-        Gen.OneOfConst(
-            "'; DROP TABLE users--",
-            "' OR '1'='1",
-            "admin'--",
-            "' UNION SELECT * FROM users--",
-            "1; DELETE FROM users WHERE 1=1--"
-        );
-
-    private static Gen<string> XssPatterns() =>
-        Gen.OneOfConst(
-            "<script>alert('XSS')</script>",
-            "<img src=x onerror=alert('XSS')>",
-            "javascript:alert('XSS')",
-            "<iframe src=\"javascript:alert('XSS')\"></iframe>",
-            "'\"><script>alert('XSS')</script>"
-        );
-
-    private static Gen<string> PathTraversalPatterns() =>
-        Gen.OneOfConst(
-            "../../../etc/passwd",
-            "..\\..\\..\\windows\\system32\\config\\sam",
-            "....//....//....//etc/passwd",
-            "%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd"
-        );
-
-    private static Gen<string> FormatStringPatterns() =>
-        Gen.OneOfConst(
-            "%s%s%s%s%s",
-            "%x%x%x%x",
-            "%n%n%n%n",
-            "{0}{1}{2}{3}"
-        );
 
     private static Gen<string> WindowsReservedNames() =>
         Gen.OneOfConst(
@@ -285,15 +228,5 @@ internal static class BiasedStrings
         Gen.OneOfConst(
             "<root><>&\"'</root>",
             "<root>&#60;&#62;&#38;</root>"
-        );
-
-    private static Gen<string> UnicodeEdgeCases() =>
-        Gen.OneOfConst(
-            "\u200B", // Zero-width space
-            "\uFEFF", // BOM
-            "\u202E", // Right-to-left override
-            "🔥", "💻", "🎉", // Emojis
-            "Ω", "π", "∞", // Math symbols
-            "中文", "日本語", "한국어" // CJK
         );
 }
