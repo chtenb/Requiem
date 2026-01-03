@@ -11,19 +11,19 @@ public static partial class GeneratorExtensions
     /// Generate a tuple of two values.
     /// </summary>
     public static Generator<(T, T)> Tuple<T>(this Generator<T> gen) =>
-        gen.Array(2, 2).Select(arr => (arr[0], arr[1]));
+        gen.Array(2, 2).Map(arr => (arr[0], arr[1]));
 
     /// <summary>
     /// Generate a tuple of three values.
     /// </summary>
     public static Generator<(T, T, T)> Tuple3<T>(this Generator<T> gen) =>
-        gen.Array(3, 3).Select(arr => (arr[0], arr[1], arr[2]));
+        gen.Array(3, 3).Map(arr => (arr[0], arr[1], arr[2]));
 
     /// <summary>
     /// Generate a tuple of four values.
     /// </summary>
     public static Generator<(T, T, T, T)> Tuple4<T>(this Generator<T> gen) =>
-        gen.Array(4, 4).Select(arr => (arr[0], arr[1], arr[2], arr[3]));
+        gen.Array(4, 4).Map(arr => (arr[0], arr[1], arr[2], arr[3]));
 
     /// <summary>
     /// Generate a tuple combining two different generator types.

@@ -2,14 +2,14 @@ namespace Requiem.Tutorial;
 
 /// <summary>
 /// Requiem has edge-case-biased generators that more frequently include problematic values (0, ±1,
-/// min/max, NaN, empty, etc.) to find bugs faster. The biased generators excel at dimensional
-/// correlation: generating identical edge cases across multiple dimensions, which is very
-/// improbable with independent uniform random distributions.
+/// min/max, NaN, empty, etc.) to find bugs faster. The biased generators are better at dimensional
+/// correlation than uniform generators. They can generate coinciding edge cases across multiple
+/// dimensions, which is very improbable with independent uniform distributions.
 /// </summary>
 public class Tutorial
 {
   /// <summary>
-  /// Built-in generators are biased towards edge cases:
+  /// Built-in generators defined in the Gens class are biased towards edge cases:
   /// - Gens.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
   /// - Gens.String: empty, whitespace, very long, Unicode edge cases
   /// - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
@@ -17,7 +17,7 @@ public class Tutorial
   [Test]
   public void BasicGeneratorsAndEdgeCases()
   {
-    // Generate single values
+    // Generate single values 
     var number = Gens.Int.Single();
     var text = Gens.String.Single();
 
@@ -55,38 +55,36 @@ public class Tutorial
     // number of iterations You can provide this seed to be used as initial seed, for easier
     // debugging, or for further shrinking of the counter example
     Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), seed: "123456789000");
+        
+    // The properties are run in parallel on multiple threads by default, to speed up the evaluation
+    // This means the generators and properties must be thread safe.
+    // To make the evaluation single-threaded, set the number of threads to 1.
+    Gens.String.Check(s => Assert.IsTrue(s.Length >= 0), threads: 1);
   }
 
   /// <summary>
   /// Transform generators using Select, Where, and Chain.
-  /// Transformations preserve shrinking behavior from CsCheck.
   /// </summary>
   [Test]
   public void GeneratorTransformations()
   {
-    // Select transforms values (filter int.MinValue as Math.Abs throws)
-    var positiveInts = Gens.Int.Where(x => x != int.MinValue).Select(x => Math.Abs(x));
-    positiveInts.Check(x => Assert.IsTrue(x >= 0));
-
-    // Where filters values
-    var evenNumbers = Gens.Int.Where(x => x % 2 == 0);
-    evenNumbers.Check(x => Assert.AreEq(x % 2, 0));
+    // Use Map and Filter to transform generated values
+    var transformed = Gens.Int
+        .Filter(x => x != 0 && x != int.MinValue) // Math.Abs throws on min value
+        .Map(x => Math.Abs(x))
+        .Filter(x => x < 1000);
+        
+    // However, while filtering out invalid cases is often convenient in formulating generators,
+    // when the invalid cases occur very often this is not very efficient. Generating the target
+    // domain directly is more efficient.
+    var moreEfficient = Gens.Range(1, 999);
 
     // Combine multiple generators with Zip
-    // Check commutativity of addition between double and int
     Gens.Int.Zip(Gens.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
 
     // Use Chain for dependent generation, where the next value depends on previous
     var gen = Gens.Range(1, 10).Chain(n => Gens.Range(n, n + 10));
     gen.Check(x => Assert.IsTrue(x >= 1));
-
-    // Combine transformations (but prefer direct generation for efficiency)
-    var combined = Gens.Int
-        .Where(x => x != 0 && x != int.MinValue)
-        .Select(x => Math.Abs(x))
-        .Where(x => x < 1000);
-
-    var moreEfficient = Gens.Range(1, 999); // Direct is better
   }
 
   /// <summary>

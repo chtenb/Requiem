@@ -11,7 +11,7 @@ public static partial class GeneratorExtensions
     /// Transform the generated values using a selector function.
     /// Pass-through to CsCheck's Select to preserve shrinking.
     /// </summary>
-    public static Generator<TResult> Select<T, TResult>(
+    public static Generator<TResult> Map<T, TResult>(
         this Generator<T> gen,
         Func<T, TResult> selector) =>
         new(gen.Inner.Select(selector));
@@ -52,7 +52,7 @@ public static partial class GeneratorExtensions
     /// Filter generated values to only include those matching the predicate.
     /// Pass-through to CsCheck's Where to preserve shrinking.
     /// </summary>
-    public static Generator<T> Where<T>(
+    public static Generator<T> Filter<T>(
         this Generator<T> gen,
         Func<T, bool> predicate) =>
         new(gen.Inner.Where(predicate));

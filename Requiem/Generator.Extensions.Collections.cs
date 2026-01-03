@@ -13,5 +13,5 @@ public static partial class GeneratorExtensions
         new Generator<T[]>(BiasedCollections.Array(gen.Inner, minLength, maxLength));
 
     public static Generator<List<T>> List<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
-        Array(gen, minLength, maxLength).Select(arr => new List<T>(arr));
+        Array(gen, minLength, maxLength).Map(arr => new List<T>(arr));
 }
