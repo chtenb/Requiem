@@ -10,45 +10,6 @@ namespace Requiem;
 public static partial class Generate
 {
     // ============================================================================
-    // Range Factory Methods
-    // ============================================================================
-
-    /// <summary>
-    /// Create an integer generator within the specified range (inclusive).
-    /// Heavily biased towards boundaries, midpoint, and special values within the range.
-    /// </summary>
-    public static Generator<int> Between(int min, int max) =>
-        new(BiasedNumbers.IntRange(min, max));
-
-    /// <summary>
-    /// Create a long generator within the specified range (inclusive).
-    /// Heavily biased towards boundaries, midpoint, and special values within the range.
-    /// </summary>
-    public static Generator<long> Between(long min, long max) =>
-        new(BiasedNumbers.LongRange(min, max));
-
-    /// <summary>
-    /// Create a double generator within the specified range.
-    /// Heavily biased towards boundaries, midpoint, and special values within the range.
-    /// </summary>
-    public static Generator<double> Between(double min, double max) =>
-        new(BiasedNumbers.DoubleRange(min, max));
-
-    /// <summary>
-    /// Create a float generator within the specified range.
-    /// Heavily biased towards boundaries, midpoint, and special values within the range.
-    /// </summary>
-    public static Generator<float> Between(float min, float max) =>
-        new(BiasedNumbers.FloatRange(min, max));
-
-    /// <summary>
-    /// Create a decimal generator within the specified range.
-    /// Heavily biased towards boundaries, midpoint, and special values within the range.
-    /// </summary>
-    public static Generator<decimal> Between(decimal min, decimal max) =>
-        new(BiasedNumbers.DecimalRange(min, max));
-
-    // ============================================================================
     // Integer Generators
     // ============================================================================
 
@@ -56,25 +17,26 @@ public static partial class Generate
     /// Integer generator with compound distribution including edge cases, powers of 2, and normal values.
     /// Biased towards: 0, ±1, ±2, int.Min/MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<int> Int => Between(int.MinValue, int.MaxValue);
+    public static Generator<int> Int(int min = int.MinValue, int max = int.MaxValue) =>
+        new(BiasedNumbers.IntRange(min, max));
 
     /// <summary>
     /// Positive integer generator (>= 0) with compound distribution including edge cases.
     /// Biased towards: 0, 1, 2, 10, 100, int.MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<int> PositiveInt => Between(0, int.MaxValue);
+    public static Generator<int> IntPositive(int max = int.MaxValue) => Int(0, max);
 
     /// <summary>
     /// Long generator with compound distribution including edge cases and boundary values.
     /// Biased towards: 0, ±1, ±2, long.Min/MaxValue, powers of 2, and int boundaries.
     /// </summary>
-    public static Generator<long> Long => Between(long.MinValue, long.MaxValue);
+    public static Generator<long> Long(long min = long.MinValue, long max = long.MaxValue) => new(BiasedNumbers.LongRange(min, max));
 
     /// <summary>
     /// Positive long generator (>= 0) with compound distribution including edge cases.
     /// Biased towards: 0, 1, 2, 10, 100, long.MaxValue, powers of 2, and boundary values.
     /// </summary>
-    public static Generator<long> PositiveLong => Between(0L, long.MaxValue);
+    public static Generator<long> LongPositive(long max = long.MaxValue) => Long(0, max);
 
     // ============================================================================
     // Floating-Point Generators
@@ -84,37 +46,7 @@ public static partial class Generate
     /// Double generator with compound distribution including special values and edge cases.
     /// Biased towards: 0, ±1, NaN, ±Infinity, Epsilon, Min/MaxValue, and very small/large values.
     /// </summary>
-    public static Generator<double> Double => Between(double.MinValue, double.MaxValue);
-
-    /// <summary>
-    /// Positive double generator (>= 0) with compound distribution including special values and edge cases.
-    /// Biased towards: 0, 1, 2, +Infinity, Epsilon, MaxValue, and very small/large values.
-    /// </summary>
-    public static Generator<double> PositiveDouble => Between(0.0, double.MaxValue);
-
-    /// <summary>
-    /// Float generator with compound distribution including special values and edge cases.
-    /// Biased towards: 0, ±1, NaN, ±Infinity, Epsilon, Min/MaxValue, and very small/large values.
-    /// </summary>
-    public static Generator<float> Float => Between(float.MinValue, float.MaxValue);
-
-    /// <summary>
-    /// Positive float generator (>= 0) with compound distribution including special values and edge cases.
-    /// Biased towards: 0, 1, 2, +Infinity, Epsilon, MaxValue, and very small/large values.
-    /// </summary>
-    public static Generator<float> PositiveFloat => Between(0.0f, float.MaxValue);
-
-    /// <summary>
-    /// Decimal generator with compound distribution including boundary values.
-    /// Biased towards: 0, ±1, Min/MaxValue, and very small/large decimal values.
-    /// </summary>
-    public static Generator<decimal> Decimal => Between(decimal.MinValue, decimal.MaxValue);
-
-    /// <summary>
-    /// Positive decimal generator (>= 0) with compound distribution including boundary values.
-    /// Biased towards: 0, 1, 2, MaxValue, and very small/large decimal values.
-    /// </summary>
-    public static Generator<decimal> PositiveDecimal => Between(0m, decimal.MaxValue);
+    public static Generator<double> Double(double min = double.NegativeInfinity, double max = double.PositiveInfinity, bool includeNan = true) => new(BiasedNumbers.DoubleRange(min, max, includeNan));
 
     // ============================================================================
     // Basic Type Generators
@@ -123,17 +55,17 @@ public static partial class Generate
     /// <summary>
     /// Boolean generator with equal probability of true and false.
     /// </summary>
-    public static Generator<bool> Bool => new(Gen.Bool);
+    public static Generator<bool> Bool() => new(Gen.Bool);
 
     /// <summary>
     /// Byte generator.
     /// </summary>
-    public static Generator<byte> Byte => new(Gen.Byte);
+    public static Generator<byte> Byte() => new(Gen.Byte);
 
     /// <summary>
     /// Character generator.
     /// </summary>
-    public static Generator<char> Char => new(Gen.Char);
+    public static Generator<char> Char() => new(Gen.Char);
 
     // ============================================================================
     // Temporal Generators
@@ -143,19 +75,19 @@ public static partial class Generate
     /// DateTime generator with compound distribution including problematic dates.
     /// Biased towards: Min/MaxValue, Unix epoch, Y2K, leap years, DST transitions, month/year boundaries, and midnight/noon.
     /// </summary>
-    public static Generator<DateTime> DateTime => new(BiasedTemporal.DateTime);
+    public static Generator<DateTime> DateTime() => new(BiasedTemporal.DateTime);
 
     /// <summary>
     /// DateTimeOffset generator with compound distribution including timezone edge cases.
     /// Biased towards: Min/MaxValue, Unix epoch, extreme timezones (±14 hours), and DST transitions.
     /// </summary>
-    public static Generator<DateTimeOffset> DateTimeOffset => new(BiasedTemporal.DateTimeOffset);
+    public static Generator<DateTimeOffset> DateTimeOffset() => new(BiasedTemporal.DateTimeOffset);
 
     /// <summary>
     /// TimeSpan generator with compound distribution including boundary values and common durations.
     /// Biased towards: Zero, Min/MaxValue, common durations (1 second/minute/hour/day), negative values, and very small/large spans.
     /// </summary>
-    public static Generator<TimeSpan> TimeSpan => new(BiasedTemporal.TimeSpan);
+    public static Generator<TimeSpan> TimeSpan() => new(BiasedTemporal.TimeSpan);
 
     // ============================================================================
     // String Generators
@@ -178,49 +110,49 @@ public static partial class Generate
     /// Email address generator with compound distribution including edge cases.
     /// Biased towards: empty, malformed emails, edge cases (max length local/domain), and valid but unusual formats.
     /// </summary>
-    public static Generator<string> Email => new(BiasedStrings.Email);
+    public static Generator<string> Email() => new(BiasedStrings.Email);
 
     /// <summary>
     /// URL generator with compound distribution including edge cases.
     /// Biased towards: empty, incomplete URLs, localhost, invalid ports, path traversal, special characters, and query strings.
     /// </summary>
-    public static Generator<string> Url => new(BiasedStrings.Url);
+    public static Generator<string> Url() => new(BiasedStrings.Url);
 
     /// <summary>
     /// IPv4 address generator with compound distribution including edge cases.
     /// Biased towards: 0.0.0.0, 127.0.0.1, 255.255.255.255, private ranges, multicast, link-local, and invalid formats.
     /// </summary>
-    public static Generator<string> IPv4 => new(BiasedStrings.IPv4);
+    public static Generator<string> IPv4() => new(BiasedStrings.IPv4);
 
     /// <summary>
     /// File path generator with compound distribution including edge cases.
     /// Biased towards: empty, ".", "..", root paths, UNC paths, reserved names (Windows), very long paths, and special characters.
     /// </summary>
-    public static Generator<string> FilePath => new(BiasedStrings.FilePath);
+    public static Generator<string> FilePath() => new(BiasedStrings.FilePath);
 
     /// <summary>
     /// Phone number generator with compound distribution including various formats.
     /// Biased towards: empty, single digit, various formats (with/without country code, parentheses, dashes), and extensions.
     /// </summary>
-    public static Generator<string> PhoneNumber => new(BiasedStrings.PhoneNumber);
+    public static Generator<string> PhoneNumber() => new(BiasedStrings.PhoneNumber);
 
     /// <summary>
     /// Credit card number generator (for testing only, not real cards).
     /// Biased towards: test card numbers, empty, all zeros, invalid lengths, and letters.
     /// </summary>
-    public static Generator<string> CreditCardNumber => new(BiasedStrings.CreditCardNumber);
+    public static Generator<string> CreditCardNumber() => new(BiasedStrings.CreditCardNumber);
 
     /// <summary>
     /// JSON string generator with compound distribution including edge cases.
     /// Biased towards: empty objects/arrays, null, malformed JSON, deep nesting, trailing commas, and special characters.
     /// </summary>
-    public static Generator<string> Json => new(BiasedStrings.Json);
+    public static Generator<string> Json() => new(BiasedStrings.Json);
 
     /// <summary>
     /// XML string generator with compound distribution including edge cases.
     /// Biased towards: empty, self-closing tags, malformed XML, CDATA sections, entities, and attributes.
     /// </summary>
-    public static Generator<string> Xml => new(BiasedStrings.Xml);
+    public static Generator<string> Xml() => new(BiasedStrings.Xml);
 
     // ============================================================================
     // Distribution Generators

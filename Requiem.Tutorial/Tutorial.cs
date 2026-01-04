@@ -17,20 +17,20 @@ public class Tutorial
         // - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
 
         // Generate single values
-        var number = Generate.Int.Next();
+        var number = Generate.Int().Next();
         var text = Generate.String().Next();
 
         Console.WriteLine($"Int: {number}, String: '{text}'");
 
         // Generators with custom distributions
-        var positiveInt = Generate.Between(1, 100).Next();
+        var boundedInt = Generate.Int(1, 100).Next();
         var choice = Generate.Uniform("red", "green", "blue").Next();
         var weighted = Generate.Weighted(
             (80, Generate.Const("common")),
             (20, Generate.Const("rare"))
         ).Next();
 
-        Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
+        Console.WriteLine($"Bounded: {boundedInt}, Choice: {choice}, Weighted: {weighted}");
     }
 
     [Test]
@@ -40,7 +40,7 @@ public class Tutorial
         // Automatic shrinking finds minimal counterexamples on failure.
 
         // Basic property: reversing twice gives original
-        Generate.Int.List().Check(list =>
+        Generate.Int().List().Check(list =>
         {
             var reversed = list.AsEnumerable().Reverse().Reverse().ToList();
             Assert.AreEq(list, reversed);
@@ -64,7 +64,7 @@ public class Tutorial
     public void GeneratorTransformations()
     {
         // Use Map and Filter to transform generated values
-        var transformed = Generate.Int
+        var transformed = Generate.Int()
             .Filter(x => x != 0 && x != int.MinValue) // Math.Abs throws on min value
             .Map(x => Math.Abs(x))
             .Filter(x => x < 1000);
@@ -72,13 +72,13 @@ public class Tutorial
         // However, while filtering out invalid cases is often convenient in formulating generators,
         // when the invalid cases occur very often this is not very efficient. Generating the target
         // domain directly is more efficient.
-        var moreEfficient = Generate.Between(1, 999);
+        var moreEfficient = Generate.Int(1, 999);
 
         // Combine multiple generators with Zip
-        Generate.Int.Zip(Generate.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
+        Generate.Int().Zip(Generate.Double()).Check((a, b) => Assert.AreEq(a + b, b + a));
 
         // Use Chain for dependent generation, where the next value depends on previous
-        var gen = Generate.Between(1, 10).Chain(n => Generate.Between(n, n + 10));
+        var gen = Generate.Int(1, 10).Chain(n => Generate.Int(n, n + 10));
         gen.Check(x => Assert.IsTrue(x >= 1));
     }
 
@@ -89,17 +89,17 @@ public class Tutorial
         // that occur in multiple places.
 
         // Arrays with default size bounds [0, 100]
-        Generate.Int.Array().Check(arr =>
+        Generate.Int().Array().Check(arr =>
         {
             Assert.AreEq(arr.Length, arr.Count());
             Assert.IsTrue(arr.Reverse().Reverse().SequenceEqual(arr));
         });
 
         // Tuples of same type
-        Generate.Int.Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
+        Generate.Int().Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
 
         // Mixed tuples with Zip
-        Generate.String().Zip(Generate.Int, Generate.Bool).Check((str, num, flag) =>
+        Generate.String().Zip(Generate.Int(), Generate.Bool()).Check((str, num, flag) =>
         {
             Assert.IsTrue(str != null);
             // Handle int.MinValue edge case (can't be negated)

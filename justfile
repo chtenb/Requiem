@@ -24,15 +24,15 @@ restore:
 
 # Run all tests
 test-all:
-    dotnet test --solution Requiem.slnx
+    dotnet test --no-restore --solution Requiem.slnx
 
 # Run a specific test by containing word
 test WORD:
-    dotnet test --solution Requiem.slnx --filter "FullyQualifiedName~{{WORD}}_"
+    dotnet test --no-restore --solution Requiem.slnx --filter "FullyQualifiedName~{{WORD}}_"
 
 # Run tests with verbose output
 test-verbose:
-    dotnet test --solution Requiem.slnx -v detailed
+    dotnet test --no-restore --solution Requiem.slnx -v detailed
 
 # Format code using dotnet format
 format:

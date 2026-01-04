@@ -23,6 +23,7 @@ readme.Append("""
 
 A property-based testing library for C# with built-in edge case bias. Requiem makes it easier to find bugs by automatically generating problematic values that often break code.
 Works with any unit test framework.
+Even for custom generators it is not necessary to write shrinkers for finding the minimal reproduction, [this happens automatically](#credits).
 
 ## Tutorial
 
@@ -51,6 +52,8 @@ The generator API can be found in Gens.cs. Have a look.
 
 - Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#.
   Requiem provides its own opiniated API and generators with enhanced edge case bias to make property-based testing more effective.
+  The CsCheck library tracks size information of generated values, and skips larger values once a failure for a smaller value has been found.
+  This process statistically converges to the smallest reproduction scenario, given enough time.
 - Requiem utilizes the list of [NaughtyStrings](https://github.com/SimonCropp/NaughtyStrings) to help finding edge cases in string generation.
 
 ## License
