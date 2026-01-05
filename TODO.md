@@ -1,6 +1,8 @@
-- Consider making all generators in API methods, for future compatibility
+- Think about a strategy to analyze distribution and evaluate dimensional correlation
+    - What about a ConditionalNext(T value) method to add to generators? Where Next() is an independent new value generation, ConditionalNext would bias its generation to a given value, in whatever way makes sense for the type to be more likely to generate interesting correlations. Some correlations can be stronger than others, so this correlator will in practice form a biased conditional distribution.
+    - Can all combinators automatically implement this?
+    - In CsCheck this can be implemented by parameterizing a generator with a value, and monadically generate it based on an earlier generated value
 - Think about use of BiasedIntervals
 - Re-evaluate all distribution weights
-- Think about a strategy to analyze distribution and evaluate dimensional correlation
 - Add a suite of failing tests that ought to be found within a reasonable number of tries
 - After an example has been found, I'd like to add some seconds to the running time to look for shrinks

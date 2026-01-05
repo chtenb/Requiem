@@ -2,6 +2,7 @@
 
 A property-based testing library for C# with built-in edge case bias. Requiem makes it easier to find bugs by automatically generating problematic values that often break code.
 Works with any unit test framework.
+Even for custom generators it is not necessary to write shrinkers for finding the minimal reproduction, [this happens automatically](#credits).
 
 ## Tutorial
 ```csharp
@@ -19,25 +20,25 @@ public class Tutorial
     public void BasicGeneratorsAndEdgeCases()
     {
         // The Built-in generators are biased towards edge cases:
-        // - Gens.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
-        // - Gens.String: empty, whitespace, very long, Unicode edge cases
-        // - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
+        // - Generate.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
+        // - Generate.String: empty, whitespace, very long, Unicode edge cases
+        // - Generate.Double: 0, ±1, NaN, ±Infinity, Epsilon
 
         // Generate single values
-        var number = Generate.Int.Next();
+        var number = Generate.Int().Next();
         var text = Generate.String().Next();
 
         Console.WriteLine($"Int: {number}, String: '{text}'");
 
         // Generators with custom distributions
-        var positiveInt = Generate.Between(1, 100).Next();
+        var boundedInt = Generate.Int(1, 100).Next();
         var choice = Generate.Uniform("red", "green", "blue").Next();
         var weighted = Generate.Weighted(
             (80, Generate.Const("common")),
             (20, Generate.Const("rare"))
         ).Next();
 
-        Console.WriteLine($"Positive: {positiveInt}, Choice: {choice}, Weighted: {weighted}");
+        Console.WriteLine($"Bounded: {boundedInt}, Choice: {choice}, Weighted: {weighted}");
     }
 
     [Test]
@@ -47,7 +48,7 @@ public class Tutorial
         // Automatic shrinking finds minimal counterexamples on failure.
 
         // Basic property: reversing twice gives original
-        Generate.Int.List().Check(list =>
+        Generate.Int().List().Check(list =>
         {
             var reversed = list.AsEnumerable().Reverse().Reverse().ToList();
             Assert.AreEq(list, reversed);
@@ -71,7 +72,7 @@ public class Tutorial
     public void GeneratorTransformations()
     {
         // Use Map and Filter to transform generated values
-        var transformed = Generate.Int
+        var transformed = Generate.Int()
             .Filter(x => x != 0 && x != int.MinValue) // Math.Abs throws on min value
             .Map(x => Math.Abs(x))
             .Filter(x => x < 1000);
@@ -79,13 +80,13 @@ public class Tutorial
         // However, while filtering out invalid cases is often convenient in formulating generators,
         // when the invalid cases occur very often this is not very efficient. Generating the target
         // domain directly is more efficient.
-        var moreEfficient = Generate.Between(1, 999);
+        var moreEfficient = Generate.Int(1, 999);
 
         // Combine multiple generators with Zip
-        Generate.Int.Zip(Generate.Double).Check((a, b) => Assert.AreEq(a + b, b + a));
+        Generate.Int().Zip(Generate.Double()).Check((a, b) => Assert.AreEq(a + b, b + a));
 
         // Use Chain for dependent generation, where the next value depends on previous
-        var gen = Generate.Between(1, 10).Chain(n => Generate.Between(n, n + 10));
+        var gen = Generate.Int(1, 10).Chain(n => Generate.Int(n, n + 10));
         gen.Check(x => Assert.IsTrue(x >= 1));
     }
 
@@ -96,17 +97,17 @@ public class Tutorial
         // that occur in multiple places.
 
         // Arrays with default size bounds [0, 100]
-        Generate.Int.Array().Check(arr =>
+        Generate.Int().Array().Check(arr =>
         {
             Assert.AreEq(arr.Length, arr.Count());
             Assert.IsTrue(arr.Reverse().Reverse().SequenceEqual(arr));
         });
 
         // Tuples of same type
-        Generate.Int.Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
+        Generate.Int().Tuple().Check((a, b) => Assert.AreEq(a + b, b + a));
 
         // Mixed tuples with Zip
-        Generate.String().Zip(Generate.Int, Generate.Bool).Check((str, num, flag) =>
+        Generate.String().Zip(Generate.Int(), Generate.Bool()).Check((str, num, flag) =>
         {
             Assert.IsTrue(str != null);
             // Handle int.MinValue edge case (can't be negated)
@@ -154,12 +155,14 @@ public class Tutorial
 
 ## Running the Examples
 
-The generator API can be found in Gens.cs. Have a look.
+The generator API can be found in Requiem/Generate.cs. Have a look.
 
 ## Credits
 
 - Requiem is currently built on top of [CsCheck](https://github.com/AnthonyLloyd/CsCheck), an excellent property-based testing library for C#.
   Requiem provides its own opiniated API and generators with enhanced edge case bias to make property-based testing more effective.
+  The CsCheck library tracks size information of generated values, and skips larger values once a failure for a smaller value has been found.
+  This process statistically converges to the smallest reproduction scenario, given enough time.
 - Requiem utilizes the list of [NaughtyStrings](https://github.com/SimonCropp/NaughtyStrings) to help finding edge cases in string generation.
 
 ## License

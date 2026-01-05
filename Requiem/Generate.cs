@@ -165,9 +165,9 @@ public static partial class Generate
         new(Gen.Const(value));
 
     /// <summary>
-    /// Toss a biased coin that returns true with probability k/n, i.e. k times out of n
+    /// Toss a biased coin that returns true with probability k/n, i.e. k times out of n on average
     /// </summary>
-    public static Generator<bool> Coin(int n = 2, int k = 1)
+    public static Generator<bool> Bool(int n = 2, int k = 1)
     {
         if (n < 2)
             throw new ArgumentException("n must be bigger than 2");
@@ -210,6 +210,9 @@ public static partial class Generate
 
     public static Generator<T[]> Array<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
         new Generator<T[]>(BiasedCollections.Array(gen.Inner, minLength, maxLength));
+
+    public static Generator<T[]> UniqueArray<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
+        new Generator<T[]>(BiasedCollections.UniqueArray(gen.Inner, minLength, maxLength));
 
     public static Generator<List<T>> List<T>(this Generator<T> gen, int minLength = 0, int maxLength = 100) =>
         Array(gen, minLength, maxLength).Map(arr => new List<T>(arr));
@@ -299,9 +302,9 @@ public static partial class Generate
     /// <summary>
     /// Chain this generator with another, using the value from this generator.
     /// </summary>
-    public static Generator<T> Chain<T>(
+    public static Generator<TNext> Chain<T, TNext>(
         this Generator<T> gen,
-        Func<T, Generator<T>> next) =>
+        Func<T, Generator<TNext>> next) =>
         new(gen.Inner.SelectMany(x => next(x).Inner));
 
     /// <summary>

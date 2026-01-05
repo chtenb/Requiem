@@ -46,7 +46,7 @@ foreach (var file in tutorialFiles)
 readme.Append("""
 ## Running the Examples
 
-The generator API can be found in Gens.cs. Have a look.
+The generator API can be found in Requiem/Generate.cs. Have a look.
 
 ## Credits
 

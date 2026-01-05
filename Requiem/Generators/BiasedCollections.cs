@@ -4,6 +4,11 @@ namespace Requiem.Generators;
 
 internal static class BiasedCollections
 {
+    public static Gen<T[]> UniqueArray<T>(Gen<T> elementGen, int minLength, int maxLength)
+    {
+        return Array(elementGen, minLength, maxLength).Select(arr => arr.Distinct().ToArray());
+    }
+    
     public static Gen<T[]> Array<T>(Gen<T> elementGen, int minLength, int maxLength)
     {
         var generators = new List<(int, Gen<T[]>)>();

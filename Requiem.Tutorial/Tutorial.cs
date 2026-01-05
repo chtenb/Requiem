@@ -12,9 +12,9 @@ public class Tutorial
     public void BasicGeneratorsAndEdgeCases()
     {
         // The Built-in generators are biased towards edge cases:
-        // - Gens.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
-        // - Gens.String: empty, whitespace, very long, Unicode edge cases
-        // - Gens.Double: 0, ±1, NaN, ±Infinity, Epsilon
+        // - Generate.Int: 0, ±1, int.MinValue, int.MaxValue, powers of 2
+        // - Generate.String: empty, whitespace, very long, Unicode edge cases
+        // - Generate.Double: 0, ±1, NaN, ±Infinity, Epsilon
 
         // Generate single values
         var number = Generate.Int().Next();
