@@ -106,7 +106,14 @@ internal static class BiasedTemporal
         Gen.DateTime.Select(dt =>
         {
             var daysUntilSaturday = ((int)DayOfWeek.Saturday - (int)dt.DayOfWeek + 7) % 7;
-            return dt.AddDays(daysUntilSaturday);
+            try
+            {
+                return dt.AddDays(daysUntilSaturday);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return daysUntilSaturday > 0 ? System.DateTime.MaxValue : dt;
+            }
         });
 
     private static Gen<DateTime> February29Dates() =>
