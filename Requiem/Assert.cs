@@ -186,4 +186,9 @@ public abstract class Assert
         if (b)
             Throw(message, "Expected false but was true");
     }
+
+    public static void Fail(string? message = null)
+    {
+        Throw(message, null);
+    }
 }
