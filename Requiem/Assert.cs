@@ -16,7 +16,7 @@ public abstract class Assert
             msg = msg1;
         else
             msg = msg1 + ":\n" + msg2;
-        throw new AssertionException(msg);
+        throw new AssertionException("\n" + msg);
         return; // To make it possible to step over the exceptions in the debugger
 #pragma warning restore CS0162 // Unreachable code detected
     }
