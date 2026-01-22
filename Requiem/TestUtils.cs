@@ -20,7 +20,7 @@ public class TestUtils
 
         while (dir != null)
         {
-            if (dir.GetFiles("*.sln").Length > 0)
+            if (dir.GetFiles("*.sln").Length > 0 || dir.GetFiles("*.slnx").Length > 0)
             {
                 _solutionRoot = dir;
                 return dir;
