@@ -26,9 +26,9 @@ public abstract class Assert
         if (a is null && b is null)
             return;
         if (a is not null && b is null)
-            Throw(message, $"\na was {a},\nbut b was null");
+            Throw(message, $"\na was {a}\nbut b was null");
         if (a is null && b is not null)
-            Throw(message, $"\na was null,\nbut b was {b}");
+            Throw(message, $"\na was null\nbut b was {b}");
         SequenceEqual(a!, b!, "a", "b");
     }
 
@@ -82,7 +82,7 @@ public abstract class Assert
     public static void AreEq<T>(T? a, T? b, IEqualityComparer<T> comparer, string? message = null)
     {
         if (!comparer.Equals(a!, b!))
-            Throw(message, $"a ({a}),\nis not equal to\nb ({b})");
+            Throw(message, $"a ({a})\nis not equal to\nb ({b})");
     }
 
     public static void AreEq<T>(IEquatable<T>? a, T? b, string? message = null)
@@ -91,11 +91,11 @@ public abstract class Assert
         if (a is null && b is null)
             return;
         if (a is not null && b is null)
-            Throw(message, $"a was {a},\nbut b was null");
+            Throw(message, $"a was {a}\nbut b was null");
         if (a is null && b is not null)
             Throw(message, $"a was null, but b was {b}");
         if (!a!.Equals(b))
-            Throw(message, $"a ({a}),\nis not equal to\nb ({b})");
+            Throw(message, $"a ({a})\nis not equal to\nb ({b})");
     }
 
     public static void AreEq<TA, TB>(TA a, TB b, string? message = null)
@@ -103,13 +103,13 @@ public abstract class Assert
         where TB : struct
     {
         if (!a.Equals(b))
-            Throw(message, $"a ({a}),\nis not equal to\nb ({b})");
+            Throw(message, $"a ({a})\nis not equal to\nb ({b})");
     }
 
     public static void AreEq(object? a, object? b, string? message = null)
     {
         if (a is not null && b is null)
-            Throw(message, $"a was {a},\nbut b was null");
+            Throw(message, $"a was {a}\nbut b was null");
         if (a is null && b is not null)
             Throw(message, $"a was null, but b was {b}");
         if (!Equals(a, b))
