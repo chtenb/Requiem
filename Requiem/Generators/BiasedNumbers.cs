@@ -206,7 +206,7 @@ internal static class BiasedNumbers
 
         double nearMin = (double.IsNegativeInfinity(min) ? double.MinValue : min) + double.Epsilon;
         double nearMax = (double.IsInfinity(max) ? double.MaxValue : max) - double.Epsilon;
-        
+
         IGen<double> nearBoundaries = Gen.OneOfConst(nearMin, nearMax);
 
         // Type boundary and special values

@@ -6,7 +6,7 @@
 public class TestUtils
 {
     private static DirectoryInfo? _solutionRoot;
-    
+
     /// <summary>
     /// Find the directory of the solution. Useful for locating files that are not local to the test project.
     /// </summary>
@@ -15,7 +15,7 @@ public class TestUtils
     {
         if (_solutionRoot is not null)
             return _solutionRoot;
-        
+
         var dir = new DirectoryInfo(AppContext.BaseDirectory);
 
         while (dir != null)

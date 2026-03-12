@@ -8,7 +8,7 @@ internal static class BiasedCollections
     {
         return Array(elementGen, minLength, maxLength).Select(arr => arr.Distinct().ToArray());
     }
-    
+
     public static Gen<T[]> Array<T>(Gen<T> elementGen, int minLength, int maxLength)
     {
         var generators = new List<(int, Gen<T[]>)>();
