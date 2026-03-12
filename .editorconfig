@@ -1,7 +1,4 @@
-# This file is not the root file.
-# This allows setting more personal or opinionated settings in a .editorconfig in a parent folder (should not get into the git source).
-# Those settings will be overridden in this file below if present.
-root = false
+root = true
 
 [*]
 indent_size = 4
