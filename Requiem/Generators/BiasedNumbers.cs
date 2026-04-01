@@ -14,9 +14,9 @@ internal static class BiasedNumbers
 
         // Calculate midpoint and quarter points
         long range = (long)max - min;
-        int mid = min + (int)(range / 2);
-        int q1 = min + (int)(range / 4);
-        int q3 = min + (int)(range * 3 / 4);
+        int mid = (int)(min + range / 2);
+        int q1 = (int)(min + range / 4);
+        int q3 = (int)(min + range * 3 / 4);
 
         // Collect generators for each category
         IGen<int> boundaries = Gen.OneOfConst(min, max);
@@ -99,9 +99,9 @@ internal static class BiasedNumbers
 
         // Use BigInteger for safe midpoint calculation
         var range = (System.Numerics.BigInteger)max - min;
-        long mid = min + (long)(range / 2);
-        long q1 = min + (long)(range / 4);
-        long q3 = min + (long)(range * 3 / 4);
+        long mid = (long)(min + range / 2);
+        long q1 = (long)(min + range / 4);
+        long q3 = (long)(min + range * 3 / 4);
 
         // Collect generators for each category
         IGen<long> boundaries = Gen.OneOfConst(min, max);
