@@ -160,19 +160,51 @@ public abstract class Assert
         }
     }
 
-    public static void Throws(Action a, string? message = null)
+    public static Exception Throws(Action a, string? message = null)
     {
-        bool hasThrown = false;
         try
         {
             a();
         }
-        catch
+        catch (Exception ex)
         {
-            hasThrown = true;
+            return ex;
         }
-        if (!hasThrown)
-            Throw(message, "Expected exception, but no exception was thrown");
+        Throw(message, "Expected exception, but no exception was thrown");
+        throw new InvalidOperationException("Unreachable");
+    }
+
+    public static void Throws<TException>(Action a, string? message = null) where TException : Exception
+    {
+        try
+        {
+            a();
+        }
+        catch (TException)
+        {
+            return;
+        }
+        catch (Exception ex)
+        {
+            Throw(message, $"Expected exception of type {typeof(TException).Name}, but got {ex.GetType().Name}: {ex.Message}");
+        }
+        Throw(message, $"Expected exception of type {typeof(TException).Name}, but no exception was thrown");
+    }
+
+    public static void Contains(string? haystack, string needle, string? message = null)
+    {
+        if (haystack is null)
+            Throw(message, $"Expected string to contain '{needle}', but string was null");
+        if (!haystack!.Contains(needle))
+            Throw(message, $"Expected string to contain '{needle}', but it was '{haystack}'");
+    }
+
+    public static void IsTypeOf<T>(object? obj, string? message = null)
+    {
+        if (obj is null)
+            Throw(message, $"Expected object of type {typeof(T).Name}, but object was null");
+        if (obj is not T)
+            Throw(message, $"Expected object of type {typeof(T).Name}, but got {obj!.GetType().Name}");
     }
 
     public static void IsTrue(bool b, string? message = null)
