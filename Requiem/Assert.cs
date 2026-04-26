@@ -21,6 +21,22 @@ public abstract class Assert
 #pragma warning restore CS0162 // Unreachable code detected
     }
 
+    public static void AreEq<T>(IReadOnlySet<T>? a, IReadOnlySet<T>? b, string? message = null)
+    {
+        if (a is null && b is null)
+            return;
+        if (a is not null && b is null)
+            Throw(message, $"\na was {a}\nbut b was null");
+        if (a is null && b is not null)
+            Throw(message, $"\na was null\nbut b was {b}");
+
+        if (a!.Count != b!.Count)
+            Throw(message, $"Sets differ in size: a has {a.Count} elements while b has {b.Count} elements");
+
+        if (!a.SetEquals(b))
+            Throw(message, $"Sets are not equal: a is {a} while b is {b}");
+    }
+
     public static void AreEq<T>(IEnumerable<T>? a, IEnumerable<T>? b, string? message = null)
     {
         if (a is null && b is null)
@@ -29,7 +45,7 @@ public abstract class Assert
             Throw(message, $"\na was {a}\nbut b was null");
         if (a is null && b is not null)
             Throw(message, $"\na was null\nbut b was {b}");
-        SequenceEqual(a!, b!, "a", "b");
+        SequenceEqual(a!, b!, "a", "b", message);
     }
 
     /// <summary>
