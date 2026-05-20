@@ -4,9 +4,11 @@ namespace Requiem.Generators;
 
 internal static class BiasedCollections
 {
-    public static Gen<T[]> UniqueArray<T>(Gen<T> elementGen, int minLength, int maxLength)
+    // TODO: The hashset combinator can fail with unclear error message.
+    // Can we expose a hashset combinator that is efficient but also does not fail too quickly, and if it fails, has a good trace and error message?
+    private static Gen<HashSet<T>> HashSet<T>(Gen<T> elementGen, int minLength, int maxLength)
     {
-        return Array(elementGen, minLength, maxLength).Select(arr => arr.Distinct().ToArray());
+        return BiasedNumbers.IntRange(minLength, maxLength).SelectMany(length => elementGen.HashSet[length]);
     }
 
     public static Gen<T[]> Array<T>(Gen<T> elementGen, int minLength, int maxLength)
@@ -18,15 +20,15 @@ internal static class BiasedCollections
             generators.Add((10, Gen.Const(System.Array.Empty<T>())));
 
         // Single element only if minLength allows it
-        if (minLength <= 1)
+        if (minLength <= 1 && 1 <= maxLength)
             generators.Add((10, elementGen.Select(x => new[] { x })));
 
         // Two elements only if minLength allows it
-        if (minLength <= 2)
+        if (minLength <= 2 && 2 <= maxLength)
             generators.Add((10, elementGen.Select(x => new[] { x, x })));
 
         // Three elements only if minLength allows it
-        if (minLength <= 3)
+        if (minLength <= 3 && 3 <= maxLength)
             generators.Add((10, elementGen.Select(x => new[] { x, x, x })));
 
         // All same elements
