@@ -182,7 +182,7 @@ public static partial class Generate
     /// Create a generator that randomly selects one of the provided values with equal probability.
     /// Values that are earlier in the list are considered simpler for shrinking purposes.
     /// </summary>
-    public static Generator<T> Uniform<T>(params T[] values)
+    public static Generator<T> UniformConst<T>(params T[] values)
     {
         if (values.Length == 0)
             throw new ArgumentException("Must provide at least one choice", nameof(values));
@@ -191,9 +191,28 @@ public static partial class Generate
     }
 
     /// <summary>
-    /// Create a generator that selects from multiple generators based on weighted frequencies.
+    /// Create a generator that randomly selects one of the provided generators with equal probability.
+    /// Generators that are earlier in the list are considered simpler for shrinking purposes.
+    /// </summary>
+    public static Generator<T> Uniform<T>(params Generator<T>[] generators)
+    {
+        return Weighted(generators.Select(gen => (1, gen)).ToArray());
+    }
+
+    /// <summary>
+    /// Create a generator that selects from multiple values based on weighted frequencies.
     /// Weights are automatically normalized.
     /// Values that are earlier in the list are considered simpler for shrinking purposes.
+    /// </summary>
+    public static Generator<T> WeightedConst<T>(params (int Weight, T Value)[] choices)
+    {
+        return Weighted(choices.Select(weightedValue => (weightedValue.Weight, Const(weightedValue.Value))).ToArray());
+    }
+
+    /// <summary>
+    /// Create a generator that selects from multiple generators based on weighted frequencies.
+    /// Weights are automatically normalized.
+    /// Generators that are earlier in the list are considered simpler for shrinking purposes.
     /// </summary>
     public static Generator<T> Weighted<T>(params (int Weight, Generator<T> Gen)[] choices)
     {
