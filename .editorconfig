@@ -4,8 +4,7 @@ root = true
 indent_size = 4
 indent_style = space
 tab_width = 4
-# We commit lf, but want to allow windows users to use autocrlf
-# end_of_line = lf
+end_of_line = lf
 
 # To avoid the scrollbar on the github homepage
 [Requiem.Tutorial/Tutorial.cs]
