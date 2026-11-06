@@ -5,7 +5,7 @@ namespace Requiem.Generators;
 internal static class BiasedTemporal
 {
     public static readonly Gen<DateTime> DateTime = Gen.Frequency(
-        (20, Gen.OneOfConst(
+        (20, Gen.OneOf(
             System.DateTime.MinValue,
             System.DateTime.MaxValue,
             new DateTime(1970, 1, 1), // Unix epoch
@@ -27,7 +27,7 @@ internal static class BiasedTemporal
     );
 
     public static readonly Gen<TimeSpan> TimeSpan = Gen.Frequency(
-        (25, Gen.OneOfConst(
+        (25, Gen.OneOf(
             System.TimeSpan.Zero,
             System.TimeSpan.MinValue,
             System.TimeSpan.MaxValue,
@@ -38,7 +38,7 @@ internal static class BiasedTemporal
             System.TimeSpan.FromMilliseconds(1),
             System.TimeSpan.FromTicks(1)
         )),
-        (15, Gen.OneOfConst(
+        (15, Gen.OneOf(
             System.TimeSpan.FromDays(-1),
             System.TimeSpan.FromHours(-1),
             System.TimeSpan.FromMinutes(-1)
@@ -52,7 +52,7 @@ internal static class BiasedTemporal
     );
 
     public static readonly Gen<DateTimeOffset> DateTimeOffset = Gen.Frequency(
-        (20, Gen.OneOfConst(
+        (20, Gen.OneOf(
             System.DateTimeOffset.MinValue,
             System.DateTimeOffset.MaxValue,
             System.DateTimeOffset.UtcNow,
@@ -64,11 +64,11 @@ internal static class BiasedTemporal
     );
 
     private static Gen<DateTime> LeapYearDates() =>
-        Gen.OneOfConst(2000, 2004, 2008, 2012, 2016, 2020, 2024)
+        Gen.OneOf(2000, 2004, 2008, 2012, 2016, 2020, 2024)
             .Select(year => new DateTime(year, 2, 29));
 
     private static Gen<DateTime> DstTransitionDates() =>
-        Gen.Int[2000, 2030].Select(Gen.OneOfConst(3, 10), (year, month) =>
+        Gen.Int[2000, 2030].Select(Gen.OneOf(3, 10), (year, month) =>
             new DateTime(year, month, month == 3 ? 10 : 27, 2, 0, 0));
 
     private static Gen<DateTime> EndOfMonthDates() =>
@@ -79,7 +79,7 @@ internal static class BiasedTemporal
         Gen.DateTime.Select(dt => new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour < 12 ? 0 : 12, 0, 0));
 
     private static Gen<DateTime> LeapSecondDates() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             new DateTime(2016, 12, 31, 23, 59, 59),
             new DateTime(2015, 6, 30, 23, 59, 59),
             new DateTime(2012, 6, 30, 23, 59, 59)
@@ -89,7 +89,7 @@ internal static class BiasedTemporal
         Gen.Int[2000, 2030].Select(Gen.Int[1, 12], (year, month) =>
         {
             var lastDay = System.DateTime.DaysInMonth(year, month);
-            return Gen.OneOfConst(
+            return Gen.OneOf(
                 new DateTime(year, month, 1, 0, 0, 0),
                 new DateTime(year, month, lastDay, 23, 59, 59)
             );
@@ -97,7 +97,7 @@ internal static class BiasedTemporal
 
     private static Gen<DateTime> YearBoundaries() =>
         Gen.Int[2000, 2030].SelectMany(year =>
-            Gen.OneOfConst(
+            Gen.OneOf(
                 new DateTime(year, 1, 1, 0, 0, 0),
                 new DateTime(year, 12, 31, 23, 59, 59)
             ));
@@ -117,7 +117,7 @@ internal static class BiasedTemporal
         });
 
     private static Gen<DateTime> February29Dates() =>
-        Gen.OneOfConst(2000, 2004, 2008, 2012, 2016, 2020, 2024)
+        Gen.OneOf(2000, 2004, 2008, 2012, 2016, 2020, 2024)
             .Select(year => new DateTime(year, 2, 29));
 
     private static Gen<TimeSpan> VerySmallTimeSpans() =>
@@ -127,7 +127,7 @@ internal static class BiasedTemporal
         Gen.Int[1, 365 * 100].Select(days => System.TimeSpan.FromDays(days));
 
     private static Gen<TimeSpan> CommonDurations() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             System.TimeSpan.FromSeconds(1),
             System.TimeSpan.FromMinutes(1),
             System.TimeSpan.FromHours(1),
@@ -148,7 +148,7 @@ internal static class BiasedTemporal
             new DateTimeOffset(dt, System.TimeSpan.FromHours(offsetHours)));
 
     private static Gen<DateTimeOffset> DstTransitionOffsets() =>
-        Gen.Int[2000, 2030].Select(Gen.OneOfConst(3, 10), (year, month) =>
+        Gen.Int[2000, 2030].Select(Gen.OneOf(3, 10), (year, month) =>
         {
             var day = month == 3 ? 10 : 27;
             var dt = new DateTime(year, month, day, 2, 0, 0);

@@ -70,7 +70,7 @@ internal static class BiasedCollections
         if (sizes.Count == 0)
             sizes.Add(minLength);
 
-        return Gen.OneOfConst(sizes.ToArray())
+        return Gen.OneOf(sizes.ToArray())
             .SelectMany(size => elementGen.Array[size, size]);
     }
 
