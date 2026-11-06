@@ -71,7 +71,7 @@ internal static class BiasedStrings
     }
 
     public static readonly Gen<string> FilePath = Gen.Frequency(
-        (15, Gen.OneOfConst(
+        (15, Gen.OneOf(
             "",
             ".",
             "..",
@@ -90,7 +90,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> Email = Gen.Frequency(
-        (10, Gen.OneOfConst(
+        (10, Gen.OneOf(
             "",
             "@",
             "user@",
@@ -108,7 +108,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> Url = Gen.Frequency(
-        (10, Gen.OneOfConst(
+        (10, Gen.OneOf(
             "",
             "http://",
             "https://",
@@ -127,7 +127,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> IPv4 = Gen.Frequency(
-        (30, Gen.OneOfConst(
+        (30, Gen.OneOf(
             "0.0.0.0",
             "127.0.0.1",
             "255.255.255.255",
@@ -146,7 +146,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> CreditCardNumber = Gen.Frequency(
-        (20, Gen.OneOfConst(
+        (20, Gen.OneOf(
             "4111111111111111",
             "5500000000000004",
             "340000000000009",
@@ -160,7 +160,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> PhoneNumber = Gen.Frequency(
-        (15, Gen.OneOfConst(
+        (15, Gen.OneOf(
             "",
             "0",
             "1234567890",
@@ -175,7 +175,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> Json = Gen.Frequency(
-        (15, Gen.OneOfConst(
+        (15, Gen.OneOf(
             "{}",
             "[]",
             "null",
@@ -194,7 +194,7 @@ internal static class BiasedStrings
     );
 
     public static readonly Gen<string> Xml = Gen.Frequency(
-        (15, Gen.OneOfConst(
+        (15, Gen.OneOf(
             "<root/>",
             "<root></root>",
             "",
@@ -212,7 +212,7 @@ internal static class BiasedStrings
     );
 
     private static Gen<string> WindowsReservedNames() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             "CON", "PRN", "AUX", "NUL",
             "COM1", "COM2", "COM3", "COM4",
             "LPT1", "LPT2", "LPT3"
@@ -230,7 +230,7 @@ internal static class BiasedStrings
             $"\\\\{server}\\{share}\\file.txt");
 
     private static Gen<string> ValidButUnusualEmails() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             "user+tag@domain.com",
             "user.name@domain.com",
             "user_name@domain.com",
@@ -249,7 +249,7 @@ internal static class BiasedStrings
         Gen.String.Select(s => $"https://example.com#{s}");
 
     private static Gen<string> InvalidCreditCards() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             "1234",
             "12345678901234567890",
             "abcd-efgh-ijkl-mnop",
@@ -271,7 +271,7 @@ internal static class BiasedStrings
         });
 
     private static Gen<string> JsonWithSpecialChars() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             "{\"key\":\"value\\nwith\\nnewlines\"}",
             "{\"key\":\"value\\twith\\ttabs\"}",
             "{\"key\":\"value\\\"with\\\"quotes\"}",
@@ -282,7 +282,7 @@ internal static class BiasedStrings
         Gen.String.Select(s => $"<root><![CDATA[{s}]]></root>");
 
     private static Gen<string> XmlWithEntities() =>
-        Gen.OneOfConst(
+        Gen.OneOf(
             "<root><>&\"'</root>",
             "<root>&#60;&#62;&#38;</root>"
         );

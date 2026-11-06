@@ -19,10 +19,10 @@ internal static class BiasedNumbers
         int q3 = (int)(min + range * 3 / 4);
 
         // Collect generators for each category
-        IGen<int> boundaries = Gen.OneOfConst(min, max);
-        IGen<int>? nearBoundaries = max - min > 1 ? Gen.OneOfConst(min + 1, max - 1) : null;
-        IGen<int> midpoint = Gen.OneOfConst(mid);
-        IGen<int> quarterPoints = Gen.OneOfConst(q1, q3);
+        IGen<int> boundaries = Gen.OneOf(min, max);
+        IGen<int>? nearBoundaries = range > 1 ? Gen.OneOf(min + 1, max - 1) : null;
+        IGen<int> midpoint = Gen.OneOf(mid);
+        IGen<int> quarterPoints = Gen.OneOf(q1, q3);
 
         // Common special values
         var specialValues = new List<int>();
@@ -36,7 +36,7 @@ internal static class BiasedNumbers
         if (100 >= min && 100 <= max) specialValues.Add(100);
         if (-100 >= min && -100 <= max) specialValues.Add(-100);
         if (1000 >= min && 1000 <= max) specialValues.Add(1000);
-        IGen<int>? special = specialValues.Count > 0 ? Gen.OneOfConst(specialValues.ToArray()) : null;
+        IGen<int>? special = specialValues.Count > 0 ? Gen.OneOf(specialValues.ToArray()) : null;
 
         // Type boundary values
         var typeBoundaries = new List<int>();
@@ -44,7 +44,7 @@ internal static class BiasedNumbers
         if ((int)byte.MinValue >= min && (int)byte.MinValue <= max) typeBoundaries.Add((int)byte.MinValue);
         if (short.MaxValue >= min && short.MaxValue <= max) typeBoundaries.Add(short.MaxValue);
         if (short.MinValue >= min && short.MinValue <= max) typeBoundaries.Add(short.MinValue);
-        IGen<int>? typeBounds = typeBoundaries.Count > 0 ? Gen.OneOfConst(typeBoundaries.ToArray()) : null;
+        IGen<int>? typeBounds = typeBoundaries.Count > 0 ? Gen.OneOf(typeBoundaries.ToArray()) : null;
 
         // Powers of two
         var powersOfTwo = new List<int>();
@@ -54,7 +54,7 @@ internal static class BiasedNumbers
             if (pow >= min && pow <= max) powersOfTwo.Add(pow);
             if (-pow >= min && -pow <= max) powersOfTwo.Add(-pow);
         }
-        IGen<int>? powers = powersOfTwo.Count > 0 ? Gen.OneOfConst(powersOfTwo.ToArray()) : null;
+        IGen<int>? powers = powersOfTwo.Count > 0 ? Gen.OneOf(powersOfTwo.ToArray()) : null;
 
         // Near powers of two - collect all valid values
         var nearPowersOfTwo = new List<int>();
@@ -67,10 +67,10 @@ internal static class BiasedNumbers
                     nearPowersOfTwo.Add(val);
             }
         }
-        IGen<int>? nearPowers = nearPowersOfTwo.Count > 0 ? Gen.OneOfConst(nearPowersOfTwo.ToArray()) : null;
+        IGen<int>? nearPowers = nearPowersOfTwo.Count > 0 ? Gen.OneOf(nearPowersOfTwo.ToArray()) : null;
 
-        // Gen.Int throws when passing int.MinValue and int.MaxValue
-        IGen<int> uniform = min == int.MinValue && max == int.MaxValue ? Gen.Int : Gen.Int[min, max];
+        // Uniform over [min, max]; CsCheck maps the full int range to Gen.Int.Uniform
+        IGen<int> uniform = Gen.Int[min, max];
 
         // Build final distribution
         var choices = new List<(int, IGen<int>)>
@@ -104,10 +104,10 @@ internal static class BiasedNumbers
         long q3 = (long)(min + range * 3 / 4);
 
         // Collect generators for each category
-        IGen<long> boundaries = Gen.OneOfConst(min, max);
-        IGen<long>? nearBoundaries = max - min > 1 ? Gen.OneOfConst(min + 1, max - 1) : null;
-        IGen<long> midpoint = Gen.OneOfConst(mid);
-        IGen<long> quarterPoints = Gen.OneOfConst(q1, q3);
+        IGen<long> boundaries = Gen.OneOf(min, max);
+        IGen<long>? nearBoundaries = range > 1 ? Gen.OneOf(min + 1, max - 1) : null;
+        IGen<long> midpoint = Gen.OneOf(mid);
+        IGen<long> quarterPoints = Gen.OneOf(q1, q3);
 
         // Common special values
         var specialValues = new List<long>();
@@ -121,13 +121,13 @@ internal static class BiasedNumbers
         if (100L >= min && 100L <= max) specialValues.Add(100L);
         if (-100L >= min && -100L <= max) specialValues.Add(-100L);
         if (1000L >= min && 1000L <= max) specialValues.Add(1000L);
-        IGen<long>? special = specialValues.Count > 0 ? Gen.OneOfConst(specialValues.ToArray()) : null;
+        IGen<long>? special = specialValues.Count > 0 ? Gen.OneOf(specialValues.ToArray()) : null;
 
         // Type boundary values
         var typeBoundaries = new List<long>();
         if (int.MaxValue >= min && int.MaxValue <= max) typeBoundaries.Add(int.MaxValue);
         if ((long)int.MinValue >= min && (long)int.MinValue <= max) typeBoundaries.Add((long)int.MinValue);
-        IGen<long>? typeBounds = typeBoundaries.Count > 0 ? Gen.OneOfConst(typeBoundaries.ToArray()) : null;
+        IGen<long>? typeBounds = typeBoundaries.Count > 0 ? Gen.OneOf(typeBoundaries.ToArray()) : null;
 
         // Powers of two
         var powersOfTwo = new List<long>();
@@ -137,7 +137,7 @@ internal static class BiasedNumbers
             if (pow >= min && pow <= max) powersOfTwo.Add(pow);
             if (-pow >= min && -pow <= max) powersOfTwo.Add(-pow);
         }
-        IGen<long>? powers = powersOfTwo.Count > 0 ? Gen.OneOfConst(powersOfTwo.ToArray()) : null;
+        IGen<long>? powers = powersOfTwo.Count > 0 ? Gen.OneOf(powersOfTwo.ToArray()) : null;
 
         // Near powers of two - collect all valid values
         var nearPowersOfTwo = new List<long>();
@@ -150,9 +150,10 @@ internal static class BiasedNumbers
                     nearPowersOfTwo.Add(val);
             }
         }
-        IGen<long>? nearPowers = nearPowersOfTwo.Count > 0 ? Gen.OneOfConst(nearPowersOfTwo.ToArray()) : null;
+        IGen<long>? nearPowers = nearPowersOfTwo.Count > 0 ? Gen.OneOf(nearPowersOfTwo.ToArray()) : null;
 
-        IGen<long> uniform = min == long.MinValue && max == long.MaxValue ? Gen.Long : Gen.Long[min, max];
+        // Uniform over [min, max]; CsCheck maps the full long range to Gen.Long.Uniform
+        IGen<long> uniform = Gen.Long[min, max];
 
         // Build final distribution
         var choices = new List<(int, IGen<long>)>
@@ -173,18 +174,27 @@ internal static class BiasedNumbers
 
     public static Gen<double> DoubleRange(double min, double max, bool includeNan)
     {
+        if (double.IsNaN(min) || double.IsNaN(max))
+            throw new ArgumentException("min and max must not be NaN");
+
         if (min > max)
             throw new ArgumentException("min must be <= max");
 
         if (min == max)
             return Gen.Const(min);
 
-        double mid = (min + max) / 2;
-        double q1 = min + (max - min) / 4;
-        double q3 = min + (max - min) * 3 / 4;
+        // Finite span of the range. Infinite bounds are only ever produced as boundary values,
+        // all arithmetic below uses lo/hi so it can neither overflow nor produce NaN (-inf + inf).
+        double lo = Math.Max(min, double.MinValue);
+        double hi = Math.Min(max, double.MaxValue);
 
-        IGen<double> midpoint = Gen.OneOfConst(mid);
-        IGen<double> quarterPoints = Gen.OneOfConst(q1, q3);
+        // Weighted sums instead of lo + (hi - lo) * k: hi - lo overflows for wide ranges
+        double mid = lo * 0.5 + hi * 0.5;
+        double q1 = lo * 0.75 + hi * 0.25;
+        double q3 = lo * 0.25 + hi * 0.75;
+
+        IGen<double> midpoint = Gen.OneOf(mid);
+        IGen<double> quarterPoints = Gen.OneOf(q1, q3);
 
         // Common values
         var commonValues = new List<double>();
@@ -200,14 +210,13 @@ internal static class BiasedNumbers
         if (0.01 >= min && 0.01 <= max) commonValues.Add(0.01);
         if (-0.01 >= min && -0.01 <= max) commonValues.Add(-0.01);
         if (-0.0 >= min && -0.0 <= max) commonValues.Add(-0.0);
-        IGen<double>? common = commonValues.Count > 0 ? Gen.OneOfConst(commonValues.ToArray()) : null;
+        IGen<double>? common = commonValues.Count > 0 ? Gen.OneOf(commonValues.ToArray()) : null;
 
-        IGen<double> boundaries = Gen.OneOfConst(min, max);
+        IGen<double> boundaries = Gen.OneOf(min, max);
 
-        double nearMin = (double.IsNegativeInfinity(min) ? double.MinValue : min) + double.Epsilon;
-        double nearMax = (double.IsInfinity(max) ? double.MaxValue : max) - double.Epsilon;
-
-        IGen<double> nearBoundaries = Gen.OneOfConst(nearMin, nearMax);
+        // Adjacent representable values; BitIncrement(-inf) is MinValue and BitDecrement(+inf) is MaxValue.
+        // (min + double.Epsilon rounds back to min for any non-subnormal min.)
+        IGen<double> nearBoundaries = Gen.OneOf(Math.BitIncrement(min), Math.BitDecrement(max));
 
         // Type boundary and special values
         var specialValues = new List<double>();
@@ -218,7 +227,7 @@ internal static class BiasedNumbers
         if (-double.Epsilon >= min && -double.Epsilon <= max) specialValues.Add(-double.Epsilon);
         if (double.MaxValue >= min && double.MaxValue <= max) specialValues.Add(double.MaxValue);
         if (double.MinValue >= min && double.MinValue <= max) specialValues.Add(double.MinValue);
-        IGen<double>? typeBounds = specialValues.Count > 0 ? Gen.OneOfConst(specialValues.ToArray()) : null;
+        IGen<double>? typeBounds = specialValues.Count > 0 ? Gen.OneOf(specialValues.ToArray()) : null;
 
         // Very small doubles - collect all valid values
         var verySmallValues = new List<double>();
@@ -230,7 +239,7 @@ internal static class BiasedNumbers
             if (-val >= min && -val <= max)
                 verySmallValues.Add(-val);
         }
-        IGen<double>? verySmall = verySmallValues.Count > 0 ? Gen.OneOfConst(verySmallValues.ToArray()) : null;
+        IGen<double>? verySmall = verySmallValues.Count > 0 ? Gen.OneOf(verySmallValues.ToArray()) : null;
 
         // Very large doubles - collect all valid values
         var veryLargeValues = new List<double>();
@@ -242,9 +251,12 @@ internal static class BiasedNumbers
             if (-val >= min && -val <= max)
                 veryLargeValues.Add(-val);
         }
-        IGen<double>? veryLarge = veryLargeValues.Count > 0 ? Gen.OneOfConst(veryLargeValues.ToArray()) : null;
+        IGen<double>? veryLarge = veryLargeValues.Count > 0 ? Gen.OneOf(veryLargeValues.ToArray()) : null;
 
-        IGen<double> uniform = Gen.Double[min, max];
+        // Uniform by value over [lo, hi]. Not Gen.Double[min, max]: that is CsCheck's own biased mix
+        // (integers, rationals, exponentials) and yields NaN for infinite bounds.
+        // The convex combination cannot overflow; the clamp absorbs rounding at the edges.
+        IGen<double> uniform = Gen.Double.Unit.Select(u => Math.Clamp((1 - u) * lo + u * hi, lo, hi));
 
         // Build final distribution
         var choices = new List<(int, IGen<double>)>

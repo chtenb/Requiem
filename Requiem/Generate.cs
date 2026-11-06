@@ -187,7 +187,7 @@ public static partial class Generate
         if (values.Length == 0)
             throw new ArgumentException("Must provide at least one choice", nameof(values));
 
-        return new(Gen.OneOfConst(values));
+        return new(Gen.OneOf(values));
     }
 
     /// <summary>

@@ -45,6 +45,33 @@ public class TestGeneratorParameters
     }
 
     [Test]
+    public void DoubleStaysInRangeWithoutNan()
+    {
+        Generate.Double().Tuple()
+            .Filter((min, max) => min <= max)
+            .Check((min, max) =>
+            {
+                var gen = Generate.Double(min, max, includeNan: false);
+                for (var i = 0; i < 100; i++)
+                {
+                    var d = gen.Next();
+                    if (double.IsNaN(d) || d < min || d > max)
+                        throw new Exception($"{d} outside [{min}, {max}]");
+                }
+            }, iter: 1000);
+    }
+
+    [Test]
+    public void DoubleDefaultBoundsWithoutNan()
+    {
+        Generate.Double(includeNan: false).Check(d =>
+        {
+            if (double.IsNaN(d))
+                throw new Exception("NaN generated with includeNan: false");
+        }, iter: 100000);
+    }
+
+    [Test]
     public void String()
     {
         Generate.Int(0, 1000).Tuple()
